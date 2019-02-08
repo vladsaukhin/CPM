@@ -1,6 +1,4 @@
 #include "MPA.h"
-#include<fstream>
-
 
 MPA::MPA( const std::vector<allLexem>& vectorlexem )
 	: m_lexem( vectorlexem )

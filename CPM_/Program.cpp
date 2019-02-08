@@ -1,5 +1,4 @@
 #include "Program.h"
-#include<fstream>
 
 Program::~Program()
 {
@@ -60,8 +59,8 @@ void Program::analyzer()
 
 void Program::analyzer2()
 {
-	//SyntaxAnalyzer syntaxAnalyzer(m_allLexem);
-	MPA mpaAnalyzer( m_allLexem );
+	SyntaxAnalyzer syntaxAnalyzer(m_allLexem);
+	//MPA mpaAnalyzer( m_allLexem );
 
 	if (exept.empty())
 	{
@@ -73,8 +72,8 @@ void Program::analyzer2()
 		else
 		{
 
-			//syntaxAnalyzer.StartProcessing();
-			mpaAnalyzer.StartProcessing();
+			syntaxAnalyzer.StartProcessing();
+			//mpaAnalyzer.StartProcessing();
 		}
 	}
 	else

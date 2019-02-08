@@ -1,12 +1,11 @@
 #include "LexicalAnalyzer.h"
-#include<fstream>
 
 LexicalAnalyzer::LexicalAnalyzer(const string & buff)
 	: storage("")
 	, m_buff(buff)
 	, corentBlock(1)
 {
-	std::ifstream fin("./Source/lexem.txt");
+	std::ifstream fin("./Source/ReserveLexem.txt");
 	if (fin.is_open())
 	{
 		string reader;

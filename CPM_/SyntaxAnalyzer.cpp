@@ -1,6 +1,4 @@
 #include "SyntaxAnalyzer.h"
-#include<fstream>
-
 
 SyntaxAnalyzer::SyntaxAnalyzer(const std::vector<allLexem>& vectorlexem)
 	: m_lexem(vectorlexem)
