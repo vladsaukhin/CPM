@@ -8,15 +8,13 @@ class Program
 {
 public:
 
-	Program(string filename)
-		:m_fileName(filename)
-	{}
+	Program(const string& filename);
 	~Program();
 
 	void SaveStateCode() const;
 	void InitStateCode();
 
-	void Start();
+	void Start(const short&);
 
 	inline string& GetBuff()
 	{
@@ -34,15 +32,15 @@ private:
 	Program(Program&&) = delete;
 	Program& operator=(Program&&) = delete;
 
-	void analyzer();
-	void analyzer2();
+	void lexicalAnalyzerTypeA();
+	void syntaxAnalyzerType__(const short&);
 
 public:
 	vector<Exept> exept;
 
 private:
-	string m_buff;
-	string m_fileName;
-	vector<allLexem> m_allLexem;
+	string m_buff;								//source code storage
+	string m_fileName;						//name of source file
+	vector<allLexem> m_allLexem;			//
 };
 

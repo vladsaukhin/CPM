@@ -4,6 +4,11 @@ Program::~Program()
 {
 }
 
+Program::Program( const string & filename )
+	:m_fileName( filename )
+{
+}
+
 void Program::SaveStateCode() const
 {
 	ofstream fout(m_fileName.c_str());
@@ -30,13 +35,13 @@ void Program::InitStateCode()
 	
 }
 
-void Program::Start()
+void Program::Start(const short& syntaxAnalyzerType)
 {
-	analyzer();
-	analyzer2();
+	lexicalAnalyzerTypeA();
+	syntaxAnalyzerType__( syntaxAnalyzerType );
 }
 
-void Program::analyzer() 
+void Program::lexicalAnalyzerTypeA()
 {
 
 	LexicalAnalyzer lexicalAnalyzer(m_buff);
@@ -57,10 +62,17 @@ void Program::analyzer()
 	
 }
 
-void Program::analyzer2()
+void Program::syntaxAnalyzerType__(const short& syntaxAnalyzerType)
 {
-	SyntaxAnalyzer syntaxAnalyzer(m_allLexem);
-	//MPA mpaAnalyzer( m_allLexem );
+
+	switch ( syntaxAnalyzerType )
+	{
+	case 1: SyntaxAnalyzer syntaxAnalyzer( m_allLexem );  break;
+	case 2: MPA mpaAnalyzer( m_allLexem ); break;
+	default:
+		cerr << "Unexpected type of syntax analyzer!" << endl;
+	}
+	
 
 	if (exept.empty())
 	{
