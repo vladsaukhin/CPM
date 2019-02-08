@@ -1,6 +1,6 @@
 #include "MPA.h"
 
-MPA::MPA( const std::vector<allLexem>& vectorlexem )
+MPA::MPA( const std::vector<AllLexem>& vectorlexem )
 	: m_lexem( vectorlexem )
 	, next_state(1)
 	, present_token(0)
@@ -33,30 +33,8 @@ MPA::MPA( const std::vector<allLexem>& vectorlexem )
 	}
 }
 
-
 MPA::~MPA()
-{
-	int i = 0;
-
-	try
-	{
-		ofstream fout;
-		fout.open( "./Logs/SyntaxLogsTypeB.txt" );
-
-		for ( int j = 0; j < exept.size(); j++ )
-		{
-			fout << ++i << "	In line " << exept.at( j ).line << " u have " << exept.at( j ).mess
-				<< "  but got  '" << exept.at( j ).val << "'" << std::endl;
-
-		}
-		fout.close();
-
-	}
-	catch ( std::exception& e )
-	{
-		cerr << e.what() << endl;
-	}
-}
+{}
 
 void MPA::StartProcessing()
 {
@@ -84,6 +62,27 @@ void MPA::StartProcessing()
 			present_token++;
 		}
 		i = StackInt.size();
+	}
+}
+
+void MPA::ViewLogs()
+{
+	try
+	{
+		ofstream fout;
+		fout.open("./Logs/SyntaxLogsTypeB.txt");
+
+		for ( int j = 0; j < exept.size(); j++ )
+		{
+			fout << j + 1 << "	In line " << exept.at(j).line
+				<< " u have " << exept.at(j).mess
+				<< "  but got  '" << exept.at(j).val << "'" << std::endl;
+		}
+		fout.close();
+	}
+	catch ( std::exception& e )
+	{
+		cerr << e.what() << endl;
 	}
 }
 

@@ -8,15 +8,16 @@ public:
 	~LexicalAnalyzer();
 
 public:
-
 	void StartProcessing() override;
-	void writeToFile() const;
-	void writeToFileLexem() const;
-	void writeToFileConst() const;
+	void ViewLogs() override;
 
-	vector<allLexem> GetLexem() const
+	void writeAllToFile() const;
+	void writeLexemToFile() const;
+	void writeConstToFile() const;
+
+	vector<AllLexem> GetLexem() const
 	{
-		return m_allLexem;
+		return m_AllLexem;
 	}
 
 private:
@@ -27,7 +28,6 @@ private:
 	LexicalAnalyzer& operator=(LexicalAnalyzer&&) = delete;
 
 private:
-
 	bool isLeter(const char& sign) const;
 	bool isNum(const char& sign) const;
 	bool isSign(const char& sign) const;
@@ -35,16 +35,16 @@ private:
 	checkConVal isConVal(const string& val, FLAGS& flag) const;
 	string whichTypeID() const;
 	int isDeclarationID(const string& val) const;
-	void stateInt(size_t& i, const size_t& l);
-	void stateLetters(size_t& i, const size_t& l, FLAGS& flag);
-	void stateCommit(size_t& i, const size_t & l);
+	void stateInt();
+	void stateLetters();
+	void stateComment();
 	void stateAddLexem(const int& numOfLine, FLAGS& flag, int& numOfConstVal, int& numOfIdentifier);
 	void stateDoubleSign(const char& sign, size_t& iter, const size_t & length, FLAGS& flag, const int& numOfLine,
 		int& numOfConstVal, int& numOfIdentifier);
-	allLexem whichID(const string& val, int& block) const;
+	AllLexem whichID(const string& val, int& block) const;
 	int countBlock() const;
 
-	bool WasWriteToFileLexem( const std::vector<allLexem>& out, const int& test, const int& bl) const;
+	bool WasWriteToFileLexem( const std::vector<AllLexem>& out, const int& test, const int& bl) const;
 	void isCorrectSigns();
 	
 public:
@@ -52,8 +52,8 @@ public:
 
 private:
 	string m_buff;
-	vector<mymap> m_lexem;
-	vector<allLexem> m_allLexem;
+	vector<ReservedLexem> m_lexem;
+	vector<AllLexem> m_AllLexem;
 	
 	const string m_alphabetEN = "etaoinshrdlcumwfgypbvkjxqz_ETAOINSHRDLCUMWFGYPBVKJXQZ";
 	const string m_num = "1234567890";
@@ -63,5 +63,10 @@ private:
 private:
 	string storage;
 	int corentBlock;
+	FLAGS flag;
+	const size_t length;
+	size_t i;
+	int numOfConstVal;
+	int numOfIdentifier;
 };
 

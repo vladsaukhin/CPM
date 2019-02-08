@@ -1,13 +1,11 @@
 #include "Program.h"
 
 Program::~Program()
-{
-}
+{}
 
 Program::Program( const string & filename )
 	:m_fileName( filename )
-{
-}
+{}
 
 void Program::SaveStateCode() const
 {
@@ -45,10 +43,11 @@ void Program::lexicalAnalyzerTypeA()
 	std::shared_ptr<LexicalAnalyzer> lexicalAnalyzer = std::make_shared<LexicalAnalyzer>( m_buff );
 
 	lexicalAnalyzer->StartProcessing();
+	lexicalAnalyzer->ViewLogs();
 
-	lexicalAnalyzer->writeToFile();
-	lexicalAnalyzer->writeToFileLexem();
-	lexicalAnalyzer->writeToFileConst();
+	lexicalAnalyzer->writeAllToFile();
+	lexicalAnalyzer->writeLexemToFile();
+	lexicalAnalyzer->writeConstToFile();
 
 	exept = lexicalAnalyzer->exept;
 	m_allLexem = lexicalAnalyzer->GetLexem();
@@ -59,8 +58,12 @@ void Program::syntaxAnalyzerType__(const TypeAnalyzer& syntaxAnalyzerType)
 	std::shared_ptr<IAnalyzer> syntaxAnalyzer;
 	switch ( syntaxAnalyzerType )
 	{
-	case TypeAnalyzer::TypeA: syntaxAnalyzer = std::make_shared<SyntaxAnalyzer>( m_allLexem ); break;
-	case TypeAnalyzer::TypeB: syntaxAnalyzer = std::make_shared<MPA>( m_allLexem ); break;
+	case TypeAnalyzer::TypeA: 
+		syntaxAnalyzer = std::make_shared<SyntaxAnalyzer>( m_allLexem );
+		break;
+	case TypeAnalyzer::TypeB:
+		syntaxAnalyzer = std::make_shared<MPA>( m_allLexem );
+		break;
 	default:
 		cerr << "Unexpected type of syntax analyzer!" << endl;
 	}
@@ -73,7 +76,10 @@ void Program::syntaxAnalyzerType__(const TypeAnalyzer& syntaxAnalyzerType)
 			return;
 		}
 		else
+		{
 			syntaxAnalyzer->StartProcessing();
+			syntaxAnalyzer->ViewLogs();
+		}
 	}
 	else
 	{

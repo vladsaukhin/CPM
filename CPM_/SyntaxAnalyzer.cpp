@@ -1,33 +1,11 @@
 #include "SyntaxAnalyzer.h"
 
-SyntaxAnalyzer::SyntaxAnalyzer(const std::vector<allLexem>& vectorlexem)
+SyntaxAnalyzer::SyntaxAnalyzer(const std::vector<AllLexem>& vectorlexem)
 	: m_lexem(vectorlexem)
-{
-
-}
+{}
 
 SyntaxAnalyzer::~SyntaxAnalyzer()
-{
-	int i = 0;
-
-	try {
-		ofstream fout; 
-		fout.open("./Logs/SyntaxLogsTypeA.txt");
-		
-		for (int j = 0; j < exept.size(); j++)
-		{
-			fout << ++i << "	In line " << exept.at(j).line << " u have " << exept.at(j).mess
-				 << "  but got  '" << exept.at(j).val << "'" << std::endl;
-			
-		}
-		fout.close();
-
-	}
-	catch (std::exception& e)
-	{
-		cerr << e.what() << endl;
-	}
-}
+{}
 
 void SyntaxAnalyzer::StartProcessing()
 {
@@ -275,6 +253,26 @@ void SyntaxAnalyzer::StartProcessing()
 		cout << item.block << "    " <<   item.whichBlock << "     line:" << item.line << endl;
 	}
 
+}
+
+void SyntaxAnalyzer::ViewLogs()
+{
+	try
+	{
+		ofstream fout;
+		fout.open("./Logs/SyntaxLogsTypeA.txt");
+		for ( int j = 0; j < exept.size(); j++ )
+		{
+			fout << j + 1 << "	In line " << exept.at(j).line
+				<< " u have " << exept.at(j).mess
+				<< "  but got  '" << exept.at(j).val << "'" << std::endl;
+		}
+		fout.close();
+	}
+	catch ( std::exception& e )
+	{
+		cerr << e.what() << endl;
+	}
 }
 
 void SyntaxAnalyzer::declarationLexem(int & index)

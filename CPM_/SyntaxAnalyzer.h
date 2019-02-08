@@ -4,10 +4,11 @@
 class SyntaxAnalyzer : public IAnalyzer
 {
 public:
-	SyntaxAnalyzer(const std::vector<allLexem>&);
+	SyntaxAnalyzer(const std::vector<AllLexem>&);
 	~SyntaxAnalyzer();
 
 	void StartProcessing() override;
+	void ViewLogs() override;
 
 private:
 
@@ -27,7 +28,7 @@ private:
 public:
 	std::vector<Exept> exept;
 private:
-	std::vector<allLexem> m_lexem;
+	std::vector<AllLexem> m_lexem;
 
 };
 

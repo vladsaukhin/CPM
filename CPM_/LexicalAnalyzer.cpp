@@ -1,81 +1,89 @@
 #include "LexicalAnalyzer.h"
 
-LexicalAnalyzer::LexicalAnalyzer(const string & buff)
+LexicalAnalyzer::LexicalAnalyzer(const string& buff)
 	: storage("")
 	, m_buff(buff)
 	, corentBlock(1)
+	, length(buff.length())
+	, i(0)
+	, numOfIdentifier(0)
+	, numOfConstVal(0)
 {
-	std::ifstream fin("./Source/ReserveLexem.txt");
-	if (fin.is_open())
+	try
 	{
-		string reader;
-		int i = 1;
-		while (!fin.eof()) {
-			getline(fin, reader);
-			m_lexem.emplace_back(reader, i);
-			//std::cout << reader << std::endl;
-			i++;
+		std::ifstream fin("./Source/ReserveLexem.txt");
+		if (fin.is_open())
+		{
+			string reader;
+			int i = 1;
+			while ( !fin.eof() )
+			{
+				getline(fin, reader);
+				if(reader.size() != 0)
+					m_lexem.emplace_back(reader, i);
+				i+=1;
+			}
+
+			isCorrectSigns();
+
+			if ( exept.size() > 0 )
+				m_buff.~basic_string();
+
+			fin.close();
 		}
-
-		isCorrectSigns();
-		if(exept.size() >= 1) m_buff.~basic_string();
-
-		fin.close();
+		else
+		{
+			exept.emplace_back("", 0, "invalid behavior: cant find or/and open file with reserve lexems: name file must be 'ReserveLexem.txt' in './Source/'");
+			m_buff.~basic_string();
+		}
 	}
-	else
+	catch ( std::exception& e )
 	{
-		exept.emplace_back("", 0, "invalid behavior: cant find or/and open file with lexem: name file must be '__lexem__.txt'");
-		m_buff.~basic_string();
+		cerr << e.what() << endl;
 	}
 }
 
 LexicalAnalyzer::~LexicalAnalyzer()
+{}
+
+void LexicalAnalyzer::ViewLogs()
 {
-	int i = 0;
-
-	std::ofstream fout("./Logs/LexicalLogsTypeA.txt");
-	for (const Exept& item : exept)
+	try
 	{
-		fout << ++i << "	In line " << item.line << " u have " << item.mess << "   '" << item.val << "'" << std::endl;
+		int ii = 0;
+		std::ofstream fout("./Logs/LexicalLogsTypeA.txt");
+		for ( const Exept& item : exept )
+		{
+			fout << ++ii << "	In line " << item.line << " you have " << item.mess << "   '" << item.val << "'" << std::endl;
+		}
+		fout.close();
 	}
-
-	fout.close();
-
-	
+	catch ( std::exception& e )
+	{
+		cerr << e.what() << endl;
+	}
 }
 
 void LexicalAnalyzer::StartProcessing() 
 {
-
-	const size_t length = m_buff.length();
-
 	int numOfLine = 1;
-	int numOfIdentifier = 0;
-	int numOfConstVal = 0;
-	int numOfIdFunc = 0;
-	int NULL_STATE = 0;
 
-	int countBracket1 = 0; // like () 0 is true else false
-	int countBracket2 = 0; // like [] 0 is true else false
-	int countBracket3 = 0; // like {} 0 is true else false
+	int countBracket1 = 0; // like ()   |   0 is true else false
+	int countBracket2 = 0; // like []   |   0 is true else false
+	int countBracket3 = 0; // like {}   |   0 is true else false
 
-	FLAGS flag;
-	
-	for (size_t i = 0; i < length; ++i)
+	for (i = 0; i < length; i++)
 	{
-		stateCommit(i, length);
+		stateComment();
 
-		//while (m_buff.at(i) == ' ' || m_buff.at(i) == '\t') i++;
-
-		//проверяем не конец ли строки?
-		if (m_buff.at(i) == '\n')
+		if ( m_buff.at(i) == '\n' )
 		{
 			numOfLine++;
 			continue;
 		}
-		
-		stateLetters(i, length, flag);
-		stateInt(i, length);
+
+		stateLetters();
+		stateInt();
 
 		//unexpected behavior after and before
 		if (m_buff.at(i) == '.' && i + 1 != length && m_buff.at(i + 1) == '.')
@@ -246,7 +254,7 @@ void LexicalAnalyzer::StartProcessing()
 		countBracket3 = 0;
 	}
 
-}// func
+}
 
 bool LexicalAnalyzer::isLeter(const char & sign) const
 {
@@ -334,10 +342,10 @@ int LexicalAnalyzer::isDeclarationID(const string & val) const
 	return -1;
 }
 
-void LexicalAnalyzer::stateInt(size_t& i, const size_t& l)
+void LexicalAnalyzer::stateInt()
 {
 	bool flagqwerty = false;
-	while (i != l && isNum(m_buff.at(i)))
+	while (i != length && isNum(m_buff.at(i)))
 	{
 		flagqwerty = true;
 		storage += m_buff.at(i);
@@ -346,14 +354,13 @@ void LexicalAnalyzer::stateInt(size_t& i, const size_t& l)
 	if (flagqwerty) i--;
 }
 
-void LexicalAnalyzer::stateLetters(size_t & i, const size_t & l, FLAGS& flag)
+void LexicalAnalyzer::stateLetters()
 {
 	bool flagqwerty = false;
 	if (i != 0 && isNum(m_buff.at(i - 1)) && isLeter(m_buff.at(i)))
 		flag.unexpectedIdVal = true;
-	//exept.emplace_back(storage + m_buff.at(i), numOfLine, "unexpected id val");
-	//считываем букву .. если "asd123a" то ошибка 
-	while (i != l && isLeter(m_buff.at(i)))
+	
+	while (i != length && isLeter(m_buff.at(i)))
 	{
 		flagqwerty = true;
 		storage += m_buff.at(i);
@@ -362,12 +369,12 @@ void LexicalAnalyzer::stateLetters(size_t & i, const size_t & l, FLAGS& flag)
 	if(flagqwerty) --i;
 }
 
-void LexicalAnalyzer::stateCommit(size_t & i, const size_t & l)
+void LexicalAnalyzer::stateComment()
 {
-	if (m_buff.at(i) == '/' &&  i + 1 != l && m_buff.at(i + 1) == '/')
+	if (m_buff.at(i) == '/' &&  i + 1 != length && m_buff.at(i + 1) == '/')
 	{
 		i += 2;
-		while (i != l && m_buff.at(i) != '\n') i++;
+		while (i != length && m_buff.at(i) != '\n') i++;
 	}
 }
 
@@ -587,7 +594,7 @@ int LexicalAnalyzer::countBlock() const
 	return countBlock;
 }
 
-bool LexicalAnalyzer::WasWriteToFileLexem(const std::vector<allLexem> &out, const int& test, const int& bl) const
+bool LexicalAnalyzer::WasWriteToFileLexem(const std::vector<AllLexem> &out, const int& test, const int& bl) const
 {
 	for (const auto& item : out)
 	{
@@ -599,29 +606,32 @@ bool LexicalAnalyzer::WasWriteToFileLexem(const std::vector<allLexem> &out, cons
 void LexicalAnalyzer::isCorrectSigns()
 {
 
-	int numOfLine = 0;
-	string abcd;
+	int numOfLine = 1;
+	string unexpectedSign;
 	for (const char & sign : m_buff)
 	{
 		if (sign == '\n')
 		{
-			++numOfLine;
+			numOfLine+=1;
 			continue;
 		}
-		if (sign == ' ' || sign == ';' || sign == '\t' || isSign(sign)
-			|| isNum(sign) || isLeter(sign) || sign == '!'
-			|| sign == '<' || sign == '>' || sign == '=' || sign == '.') continue;
+		if (sign == ' ' || sign == ';' || sign == '\t'
+			|| isSign(sign) || isNum(sign) || isLeter(sign)
+			|| sign == '!' || sign == '<' || sign == '>' || sign == '=' || sign == '.')
+		{
+			continue;
+		}
 		else
 		{
-			abcd += sign;
-			exept.emplace_back(abcd, numOfLine + 1, "unexpected sign");
-			abcd = "";
+			unexpectedSign += sign;
+			exept.emplace_back( unexpectedSign, numOfLine, "unexpected sign");
+			unexpectedSign = "";
 		}
 	}
 	
 }
 
-void LexicalAnalyzer::writeToFile() const
+void LexicalAnalyzer::writeAllToFile() const
 {
 	//remove("__out__.txt");
 	std::ofstream fout("./Result/Lexems.txt");
@@ -635,11 +645,11 @@ void LexicalAnalyzer::writeToFile() const
 	fout.close();
 }
 
-void LexicalAnalyzer::writeToFileLexem() const
+void LexicalAnalyzer::writeLexemToFile() const
 {
 	//remove("out.txt");
 	std::ofstream fout("./Result/Variables.txt");
-	std::vector<allLexem> out;
+	std::vector<AllLexem> out;
 	fout << "  Num Line" << "          Lexem     " << "  Index" << "   Id/Con" << "      Type      " << " Block" << std::endl;
 	for (size_t i = 0; i < m_allLexem.size(); i++)
 	{
@@ -654,7 +664,7 @@ void LexicalAnalyzer::writeToFileLexem() const
 	fout.close();
 }
 
-void LexicalAnalyzer::writeToFileConst() const
+void LexicalAnalyzer::writeConstToFile() const
 {
 	std::ofstream fout("./Result/Constants.txt");
 	fout << "  Num Line" << "          Lexem     " << "  Index" << "   Id/Con" << "      Type      " << " Block" << std::endl;

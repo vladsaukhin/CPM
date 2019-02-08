@@ -40,6 +40,6 @@ public:
 private:
 	string m_buff;								//source code storage
 	string m_fileName;						//name of source file
-	vector<allLexem> m_allLexem;			//all found tokens
+	vector<AllLexem> m_allLexem;			//all found tokens
 };
 

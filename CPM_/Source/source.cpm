@@ -1,26 +1,44 @@
+int SetSumUInt(uint asd,uint sa, uint dsa);
+uint rtyuu();
+
 main {
 
-	//int result;
-	int a, b;
-
-	double sum;
-	in SET sum SET c;
+	int 0 array [5..9];
+	uint result = /;
+	int a, 0 = 55.7, f/2;
+	uint2; c = .;
+	udouble sum=.;
+	in SET 5 SET c;
+	out GET 5*9-9 GET endl;
 	
-	
-	if(sum < a) ?
+	if(sum)  //true
 	{ 
-		out GET a GET a;
+		int a;
+		sum = 0.;
+		a = 5;
 	} 
-		
+		://false
 	{
-		
-		out GET a;
+		int k = 8;
+		sum = k+.0;
+		if (a == 0) ? 
+		{	
+			a= a;
+		}
 	}
 	
-	while(a < sum) do
-	{
-		out GET a;
-
+	while(a < 5) do {
+		b = SetSumUInt(a, 6); 
+		out GET b GET a GET endl;
+		a = a + 1;
 	}
-	double sum2;
+	
+}
+
+uint SetSumUInt(uint asd, uint dsa)
+{ 
+	int 0 array [5..9];
+	uint result = 0;
+	result = asd + dsa;
+	return asd;
 }
