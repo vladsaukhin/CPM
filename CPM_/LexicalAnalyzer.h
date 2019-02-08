@@ -1,7 +1,7 @@
 #pragma once
 #include"CommoType.h"
 
-class LexicalAnalyzer
+class LexicalAnalyzer : public IAnalyzer
 {
 public:
 	LexicalAnalyzer(const string& buff);
@@ -9,7 +9,7 @@ public:
 
 public:
 
-	void StartProcessing();
+	void StartProcessing() override;
 	void writeToFile() const;
 	void writeToFileLexem() const;
 	void writeToFileConst() const;

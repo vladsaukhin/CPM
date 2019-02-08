@@ -2,13 +2,13 @@
 #include"CommoType.h"
 #include<list>
 
-class MPA
+class MPA: public IAnalyzer
 {
 public:
 	MPA( const std::vector<allLexem>& );
 	~MPA();
 
-	void StartProcessing();
+	void StartProcessing() override;
 
 	int next_step( int next_state, int i );
 	

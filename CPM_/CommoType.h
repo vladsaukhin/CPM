@@ -6,6 +6,8 @@
 #include<iomanip>
 #include<stack>
 
+#include"Interfaces.h"
+
 using std::ifstream;
 using std::ofstream;
 using std::string;
@@ -16,11 +18,17 @@ using std::cerr;
 using std::endl;
 using std::stack;
 
+enum class TypeAnalyzer
+{
+	TypeA,
+	TypeB
+};
+
 struct mymap
 {
 	string val;
 	int index;
-
+	
 	mymap(string v, int i)
 		:val(v), index(i)
 	{}

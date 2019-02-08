@@ -18,24 +18,23 @@ void Program::SaveStateCode() const
 
 void Program::InitStateCode()
 {
-	ifstream fin(m_fileName.c_str());
-	
-	if (fin.is_open()) {
-	
+	ifstream fin( m_fileName.c_str() );
+
+	if ( fin.is_open() )
+	{
 		string reader;
-		while (!fin.eof()) {
-			getline(fin, reader);
+		while ( !fin.eof() )
+		{
+			getline( fin, reader );
 			m_buff += reader;
 			m_buff += '\n';
 		}
 
 		fin.close();
 	}
-
-	
 }
 
-void Program::Start(const short& syntaxAnalyzerType)
+void Program::Start(const TypeAnalyzer& syntaxAnalyzerType)
 {
 	lexicalAnalyzerTypeA();
 	syntaxAnalyzerType__( syntaxAnalyzerType );
@@ -43,54 +42,42 @@ void Program::Start(const short& syntaxAnalyzerType)
 
 void Program::lexicalAnalyzerTypeA()
 {
+	std::shared_ptr<LexicalAnalyzer> lexicalAnalyzer = std::make_shared<LexicalAnalyzer>( m_buff );
 
-	LexicalAnalyzer lexicalAnalyzer(m_buff);
+	lexicalAnalyzer->StartProcessing();
 
-	lexicalAnalyzer.StartProcessing();
+	lexicalAnalyzer->writeToFile();
+	lexicalAnalyzer->writeToFileLexem();
+	lexicalAnalyzer->writeToFileConst();
 
-	lexicalAnalyzer.writeToFile();
-	lexicalAnalyzer.writeToFileLexem();
-	lexicalAnalyzer.writeToFileConst();
-
-	exept = lexicalAnalyzer.exept;
-	m_allLexem = lexicalAnalyzer.GetLexem();
-	//lexicalAnalyzer.~LexicalAnalyzer();
-	/*catch (std::exception& e) {
-		std::cerr << e.what() << std::endl;
-	}*/
-
-	
+	exept = lexicalAnalyzer->exept;
+	m_allLexem = lexicalAnalyzer->GetLexem();
 }
 
-void Program::syntaxAnalyzerType__(const short& syntaxAnalyzerType)
+void Program::syntaxAnalyzerType__(const TypeAnalyzer& syntaxAnalyzerType)
 {
-
+	std::shared_ptr<IAnalyzer> syntaxAnalyzer;
 	switch ( syntaxAnalyzerType )
 	{
-	case 1: SyntaxAnalyzer syntaxAnalyzer( m_allLexem );  break;
-	case 2: MPA mpaAnalyzer( m_allLexem ); break;
+	case TypeAnalyzer::TypeA: syntaxAnalyzer = std::make_shared<SyntaxAnalyzer>( m_allLexem ); break;
+	case TypeAnalyzer::TypeB: syntaxAnalyzer = std::make_shared<MPA>( m_allLexem ); break;
 	default:
 		cerr << "Unexpected type of syntax analyzer!" << endl;
 	}
 	
-
 	if (exept.empty())
 	{
 		if (m_allLexem.empty())
 		{
-			cerr << "after lexicalAnalyzer u did't find any lexem(token)" << endl;
+			cerr << "List of lexems is empty" << endl;
 			return;
 		}
 		else
-		{
-
-			syntaxAnalyzer.StartProcessing();
-			//mpaAnalyzer.StartProcessing();
-		}
+			syntaxAnalyzer->StartProcessing();
 	}
 	else
 	{
-		cerr << "U have some mistake with lexicalAnalyzer" << endl;
+		cerr << "Can't continue. You have some mistakes after lexical analyzing" << endl;
 		return;
 	}
 }

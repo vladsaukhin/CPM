@@ -7,18 +7,17 @@
 class Program 
 {
 public:
-
 	Program(const string& filename);
 	~Program();
 
 	void SaveStateCode() const;
 	void InitStateCode();
 
-	void Start(const short&);
+	void Start(const TypeAnalyzer&);
 
 	inline string& GetBuff()
 	{
-		return this->m_buff;
+		return m_buff;
 	}
 	inline void SetFile(const string& newFileName)
 	{
@@ -33,7 +32,7 @@ private:
 	Program& operator=(Program&&) = delete;
 
 	void lexicalAnalyzerTypeA();
-	void syntaxAnalyzerType__(const short&);
+	void syntaxAnalyzerType__(const TypeAnalyzer&);
 
 public:
 	vector<Exept> exept;
@@ -41,6 +40,6 @@ public:
 private:
 	string m_buff;								//source code storage
 	string m_fileName;						//name of source file
-	vector<allLexem> m_allLexem;			//
+	vector<allLexem> m_allLexem;			//all found tokens
 };
 

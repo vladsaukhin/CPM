@@ -3,10 +3,9 @@
 class IAnalyzer
 {
 public:
-	IAnalyzer();
-	~IAnalyzer();
 
-private:
+	virtual ~IAnalyzer(){}
+	virtual void StartProcessing() = 0;
 
 };
 

@@ -1,13 +1,13 @@
 #pragma once
 #include"CommoType.h"
 
-class SyntaxAnalyzer
+class SyntaxAnalyzer : public IAnalyzer
 {
 public:
 	SyntaxAnalyzer(const std::vector<allLexem>&);
 	~SyntaxAnalyzer();
 
-	void StartProcessing();
+	void StartProcessing() override;
 
 private:
 
