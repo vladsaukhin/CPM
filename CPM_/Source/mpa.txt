@@ -1,0 +1,62 @@
+1 16 2  NoKeywordProgram 
+2 20 40 3 TheProgramExpectedToStart 
+3 21 0  } 
+40 39 41  InvalidOperator 
+40 5 42  InvalidOperator 
+40 7 45  InvalidOperator 
+40 11 48  InvalidOperator 
+40 9 58  InvalidOperator 
+40 1 77  idIsRequired 
+40 2 77  idIsRequired 
+41 28 71 57 required_character_equals 
+42 6 43  required_character_SET 
+43 39 44  idIsRequired 
+44 6 43  required_character_SET 
+44 17 40  requiredCharacterSemCol 
+45 8 46  required_character_GET 
+46 39 47  idIsRequired 
+46 40 47  idIsRequired 
+47 8 46  required_character_GET 
+47 17 40  requiredCharacterSemCol 
+48 18 71 75 required_character18 
+49 19 50  required_character19 
+50 22 51  required_character22 
+51 20 40 52 required_character20 
+52 21 53  required_character21 
+53 23 54  requiredCharacterCol 
+54 20 40 55 requiredcharacter20 
+55 21 40  required_character21 
+57 17 40  requiredCharacterSemCol 
+58 18 71 76 required_character18 
+59 19 60  required_character19 
+60 10 61  required_characterDo 
+61 20 40 62 required_character 
+62 21 40  required_character 
+71 39 73  idIsRequired 
+71 40 73  idIsRequired 
+71 31 72  idIsRequired 
+71 26 72  idIsRequired 
+71 18 71 74 idIsRequired 
+72 39 73  idIsRequired 
+72 40 73  idIsRequired 
+72 18 71 74 idIsRequired 
+73 31 72  requiredcharacter31 
+73 26 72  requiredcharacter26 
+73 32 71  requiredcharacter32 
+73 33 71  requiredcharacter33 
+74 19 73  requiredcharacter19 
+75 30 71 49 requiredLE 
+75 29 71 49 requiredLE 
+75 37 71 49 requiredLE 
+75 35 71 49 requiredLE 
+75 36 71 49 requiredLE 
+75 34 71 49 requiredLE 
+76 30 71 59 requiredLE 
+76 29 71 59 requiredLE 
+76 37 71 59 requiredLE 
+76 35 71 59 requiredLE 
+76 36 71 59 requiredLE 
+76 34 71 59 requiredLE 
+77 39 78  idIsRequired 
+78 17 40  idIsRequired 
+78 27 77  idIsRequired

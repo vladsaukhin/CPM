@@ -1,0 +1,6 @@
+  Num Line          Lexem       Index   Id/Con      Type       Block
+    4                     a     39      1          int            2
+    4                     b     39      2          int            2
+    6                   sum     39      3       double            2
+    7                     c     39      4                         2
+   25                  sum2     39      5       double            5

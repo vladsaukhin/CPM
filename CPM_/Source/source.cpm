@@ -1,0 +1,26 @@
+main {
+
+	//int result;
+	int a, b;
+
+	double sum;
+	in SET sum SET c;
+	
+	
+	if(sum < a) ?
+	{ 
+		out GET a GET a;
+	} 
+		
+	{
+		
+		out GET a;
+	}
+	
+	while(a < sum) do
+	{
+		out GET a;
+
+	}
+	double sum2;
+}
