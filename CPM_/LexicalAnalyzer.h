@@ -17,7 +17,7 @@ public:
 
 	vector<AllLexem> GetLexem() const
 	{
-		return m_AllLexem;
+		return m_allLexem;
 	}
 
 private:
@@ -38,9 +38,8 @@ private:
 	void stateInt();
 	void stateLetters();
 	void stateComment();
-	void stateAddLexem(const int& numOfLine, FLAGS& flag, int& numOfConstVal, int& numOfIdentifier);
-	void stateDoubleSign(const char& sign, size_t& iter, const size_t & length, FLAGS& flag, const int& numOfLine,
-		int& numOfConstVal, int& numOfIdentifier);
+	void stateAddLexem();
+	void stateDoubleSign(const char& sign);
 	AllLexem whichID(const string& val, int& block) const;
 	int countBlock() const;
 
@@ -53,7 +52,7 @@ public:
 private:
 	string m_buff;
 	vector<ReservedLexem> m_lexem;
-	vector<AllLexem> m_AllLexem;
+	vector<AllLexem> m_allLexem;
 	
 	const string m_alphabetEN = "etaoinshrdlcumwfgypbvkjxqz_ETAOINSHRDLCUMWFGYPBVKJXQZ";
 	const string m_num = "1234567890";
@@ -68,5 +67,6 @@ private:
 	size_t i;
 	int numOfConstVal;
 	int numOfIdentifier;
+	int numOfLine;
 };
 

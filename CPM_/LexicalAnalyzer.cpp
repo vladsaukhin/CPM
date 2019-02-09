@@ -8,6 +8,7 @@ LexicalAnalyzer::LexicalAnalyzer(const string& buff)
 	, i(0)
 	, numOfIdentifier(0)
 	, numOfConstVal(0)
+	, numOfLine(1)
 {
 	try
 	{
@@ -89,9 +90,9 @@ void LexicalAnalyzer::StartProcessing()
 		if (m_buff.at(i) == '.' && i + 1 != length && m_buff.at(i + 1) == '.')
 		{
 			if (storage != "")
-				stateAddLexem(numOfLine, flag, numOfConstVal, numOfIdentifier);
+				stateAddLexem();
 			storage = "..";
-			stateAddLexem(numOfLine, flag, numOfConstVal, numOfIdentifier);
+			stateAddLexem();
 			i++;
 			continue;
 		}
@@ -112,8 +113,8 @@ void LexicalAnalyzer::StartProcessing()
 				i++;
 				if (i != length && isNum(m_buff.at(i)))
 				{
-					stateInt(i, length);
-					stateAddLexem(numOfLine, flag, numOfConstVal, numOfIdentifier);
+					stateInt();
+					stateAddLexem();
 					storage = "";
 				}
 				else 
@@ -121,7 +122,7 @@ void LexicalAnalyzer::StartProcessing()
 					if (i != length && !isLeter(m_buff.at(i)))
 					{
 						storage += '0';
-						stateAddLexem(numOfLine, flag, numOfConstVal, numOfIdentifier);
+						stateAddLexem();
 						storage = "";
 					}
 					else
@@ -136,22 +137,22 @@ void LexicalAnalyzer::StartProcessing()
 
 		if (m_buff.at(i) == '=')
 		{
-			stateDoubleSign('=', i, length, flag, numOfLine, numOfConstVal, numOfIdentifier);
+			stateDoubleSign('=');
 			continue;
 		}
 		if (m_buff.at(i) == '<')
 		{
-			stateDoubleSign('<', i, length, flag, numOfLine, numOfConstVal, numOfIdentifier);
+			stateDoubleSign('<');
 			continue;
 		}
 		if (m_buff.at(i) == '>')
 		{
-			stateDoubleSign('>', i, length, flag, numOfLine, numOfConstVal, numOfIdentifier);
+			stateDoubleSign('>');
 			continue;
 		}
 		if (m_buff.at(i) == '!')
 		{
-			stateDoubleSign('!', i, length, flag, numOfLine, numOfConstVal, numOfIdentifier);
+			stateDoubleSign('!');
 			continue;
 		}
 		if (isSign(m_buff.at(i)) && i + 1 != length 
@@ -159,9 +160,9 @@ void LexicalAnalyzer::StartProcessing()
 				||m_buff.at(i + 1) != '}' || !isSignDuplicate(m_buff.at(i + 1)))) {
 			const char sign = m_buff.at(i);
 			if (storage != "")
-				stateAddLexem(numOfLine, flag, numOfConstVal, numOfIdentifier);
+				stateAddLexem();
 			storage = sign;
-			stateAddLexem(numOfLine, flag, numOfConstVal, numOfIdentifier);
+			stateAddLexem();
 			if (sign == '(')
 				countBracket1++;
 			if (sign == ')')
@@ -183,7 +184,7 @@ void LexicalAnalyzer::StartProcessing()
 			if (isSign(m_buff.at(i))  && i + 1 != length)
 			{
 				if (storage != "")
-					stateAddLexem(numOfLine, flag, numOfConstVal, numOfIdentifier);
+					stateAddLexem();
 				storage = m_buff.at(i);
 				i++;
 				while (i != length && !isNum(m_buff.at(i)) && !isLeter(m_buff.at(i)) && m_buff.at(i) != ' ' && m_buff.at(i) != '.')
@@ -193,16 +194,16 @@ void LexicalAnalyzer::StartProcessing()
 				}
 				i--;
 				flag.unexpectedSignAfterSign = true;
-				stateAddLexem(numOfLine, flag, numOfConstVal, numOfIdentifier);
+				stateAddLexem();
 				storage = "";
 				continue;
 			}
 		}
 		if (m_buff.at(i) == ';') {
 			if (storage != "")
-				stateAddLexem(numOfLine, flag, numOfConstVal, numOfIdentifier);
+				stateAddLexem();
 			storage = ";";
-			stateAddLexem(numOfLine, flag, numOfConstVal, numOfIdentifier);
+			stateAddLexem();
 			if (countBracket1 < 0)
 			{
 				exept.emplace_back("", numOfLine, "unexpected amount of (");
@@ -235,7 +236,7 @@ void LexicalAnalyzer::StartProcessing()
 			}
 			i--;
 			if(storage != "")
-				stateAddLexem(numOfLine, flag, numOfConstVal, numOfIdentifier);
+				stateAddLexem();
 			storage = "";
 			continue;
 		}
@@ -336,7 +337,7 @@ int LexicalAnalyzer::isDeclarationID(const string & val) const
 {
 	for (const auto& item : m_allLexem)
 	{
-		if (item.val == val) return item.ID;
+		if (item.val == val) return item.numOfID;
 	}
 	
 	return -1;
@@ -378,7 +379,7 @@ void LexicalAnalyzer::stateComment()
 	}
 }
 
-void LexicalAnalyzer::stateAddLexem(const int& numOfLine, FLAGS& flag, int& numOfConstVal, int& numOfIdentifier)
+void LexicalAnalyzer::stateAddLexem()
 {
 	
 	if (flag.unexpectedIdVal == true)
@@ -444,10 +445,10 @@ void LexicalAnalyzer::stateAddLexem(const int& numOfLine, FLAGS& flag, int& numO
 		return;
 	}
 
-	allLexem test = whichID(storage, corentBlock);
+	AllLexem test = whichID(storage, corentBlock);
 	const string check = whichTypeID();
 	int block = countBlock();
-	if (test.ID == -1 ) {
+	if (test.numOfID == -1 ) {
 		if (check == "uint" || check == "int" || check == "udouble" || check == "double")
 		{
 			numOfIdentifier++;
@@ -481,7 +482,7 @@ void LexicalAnalyzer::stateAddLexem(const int& numOfLine, FLAGS& flag, int& numO
 		}
 		else
 		{
-			m_allLexem.emplace_back(storage, 39, numOfLine, test.ID, test.type, test.block);
+			m_allLexem.emplace_back(storage, 39, numOfLine, test.numOfID, test.type, test.block);
 			flag.SET_FALSE_ALL();
 			storage = "";
 			return;
@@ -489,17 +490,16 @@ void LexicalAnalyzer::stateAddLexem(const int& numOfLine, FLAGS& flag, int& numO
 	}
 }
 
-void LexicalAnalyzer::stateDoubleSign(const char & sign, size_t & i,const size_t & length
-	, FLAGS& flag, const int& numOfLine, int& numOfConstVal, int& numOfIdentifier)
+void LexicalAnalyzer::stateDoubleSign(const char & sign)
 {
 
 	if (m_buff.at(i) == sign && i + 2 != length && m_buff.at(i + 1) == '=' && (m_buff.at(i + 2) == '-' || !isSignDuplicate(m_buff.at(i + 2))))
 	{
 		if (storage != "")
-			stateAddLexem(numOfLine, flag, numOfConstVal, numOfIdentifier);
+			stateAddLexem();
 		storage = sign;
 		storage += "=";
-		stateAddLexem(numOfLine, flag, numOfConstVal, numOfIdentifier);
+		stateAddLexem();
 		storage = "";
 		i++;
 		return;
@@ -509,9 +509,9 @@ void LexicalAnalyzer::stateDoubleSign(const char & sign, size_t & i,const size_t
 		if (m_buff.at(i) == sign && i < length)
 		{
 			if (storage != "")
-				stateAddLexem(numOfLine, flag, numOfConstVal, numOfIdentifier);
+				stateAddLexem();
 			storage = sign;
-			stateAddLexem(numOfLine, flag, numOfConstVal, numOfIdentifier);
+			stateAddLexem();
 			storage = "";
 			return;
 		}
@@ -522,9 +522,9 @@ void LexicalAnalyzer::stateDoubleSign(const char & sign, size_t & i,const size_t
 			)
 		{
 			if (storage != "")
-				stateAddLexem(numOfLine, flag, numOfConstVal, numOfIdentifier);
+				stateAddLexem();
 			storage = sign;
-			stateAddLexem(numOfLine, flag, numOfConstVal, numOfIdentifier);
+			stateAddLexem();
 			storage = "";
 			return;
 		}
@@ -534,7 +534,7 @@ void LexicalAnalyzer::stateDoubleSign(const char & sign, size_t & i,const size_t
 			{
 				flag.unexpectedBehaviorBeforeDoubleSign = true;
 				if (storage != "")
-					stateAddLexem(numOfLine, flag, numOfConstVal, numOfIdentifier);
+					stateAddLexem();
 				storage = sign;
 				i++;
 				while (i != length && !isNum(m_buff.at(i)) && !isLeter(m_buff.at(i)) && m_buff.at(i) != ' ' && m_buff.at(i) != '.')
@@ -544,7 +544,7 @@ void LexicalAnalyzer::stateDoubleSign(const char & sign, size_t & i,const size_t
 				}
 				i--;
 				
-				stateAddLexem(numOfLine, flag, numOfConstVal, numOfIdentifier);
+				stateAddLexem();
 				storage = "";
 				return;
 			}
@@ -552,9 +552,9 @@ void LexicalAnalyzer::stateDoubleSign(const char & sign, size_t & i,const size_t
 	}
 }
 
-allLexem LexicalAnalyzer::whichID(const string & val, int& block) const
+AllLexem LexicalAnalyzer::whichID(const string & val, int& block) const
 {
-	allLexem temp;
+	AllLexem temp;
 	int countBlock = 1;
 	
 	for (auto it = m_allLexem.begin(); it != m_allLexem.end(); ++it)
@@ -566,7 +566,7 @@ allLexem LexicalAnalyzer::whichID(const string & val, int& block) const
 		}
 		if (it->val == val && it->index == 39 && it->block == block)
 		{
-			temp.ID = it->ID;
+			temp.numOfID = it->numOfID;
 			temp.index = it->index;
 			temp.numOfLine = it->numOfLine;
 			temp.type = it->type;
@@ -576,7 +576,7 @@ allLexem LexicalAnalyzer::whichID(const string & val, int& block) const
 		}
 	}
 
-	temp.ID = -1;
+	temp.numOfID = -1;
 	temp.block = countBlock;
 	return temp;
 }
@@ -598,7 +598,7 @@ bool LexicalAnalyzer::WasWriteToFileLexem(const std::vector<AllLexem> &out, cons
 {
 	for (const auto& item : out)
 	{
-		if (item.ID == test && item.block == bl) return true;
+		if (item.numOfID == test && item.block == bl) return true;
 	}
 	return false;
 }
@@ -654,7 +654,7 @@ void LexicalAnalyzer::writeLexemToFile() const
 	for (size_t i = 0; i < m_allLexem.size(); i++)
 	{
 
-		if (m_allLexem.at(i).index == 39 && !WasWriteToFileLexem(out, m_allLexem.at(i).ID, m_allLexem.at(i).block))
+		if (m_allLexem.at(i).index == 39 && !WasWriteToFileLexem(out, m_allLexem.at(i).numOfID, m_allLexem.at(i).block))
 		{
 			out.push_back(m_allLexem.at(i));
 			fout << m_allLexem.at(i) << std::endl;
