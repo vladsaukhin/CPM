@@ -24,6 +24,26 @@ enum class TypeAnalyzer
 	TypeB
 };
 
+enum class ReservedName
+{
+	_none,
+	_int,
+	_double,
+	_uint,
+	_udouble,
+	_in,
+	_out,
+	_while,
+	_do,
+	_if,
+	_return,
+	_endl,
+	_main,
+	_Ind,
+	_Con,
+	_operator
+};
+
 struct ReservedLexem
 {
 	string val;
@@ -60,6 +80,7 @@ struct AllLexem: public ReservedLexem
 	int numOfID;
 	string type;
 	int block;
+	ReservedName alias;
 
 	AllLexem()
 		: ReservedLexem()
@@ -67,6 +88,7 @@ struct AllLexem: public ReservedLexem
 		, numOfID()
 		, type("")
 		, block()
+		, alias(ReservedName::_none)
 	{}
 
 	AllLexem(const string& _val, int _index, int numLine, int numID, const string& _type, int _block)
@@ -77,12 +99,22 @@ struct AllLexem: public ReservedLexem
 		, block(_block)
 	{}
 
+	AllLexem(const string& _val, int _index, int numLine, int numID, const string& _type, int _block, ReservedName _alias)
+		: ReservedLexem(_val, _index)
+		, numOfLine(numLine)
+		, numOfID(numID)
+		, type(_type)
+		, block(_block)
+		, alias(_alias)
+	{}
+
 	AllLexem(const AllLexem& other)
 		: ReservedLexem(other)
 		, numOfLine(other.numOfLine)
 		, numOfID(other.numOfID)
 		, type(other.type)
 		, block(other.block)
+		, alias(other.alias)
 	{}
 	AllLexem& operator= (const AllLexem& other)
 	{
@@ -94,6 +126,7 @@ struct AllLexem: public ReservedLexem
 			numOfID = other.numOfID;
 			type = other.type;
 			block = other.block;
+			alias = other.alias;
 		}
 		return *this;
 	}
@@ -104,6 +137,7 @@ struct AllLexem: public ReservedLexem
 		, numOfID(other.numOfID)
 		, type(std::move(other.type))
 		, block(other.block)
+		, alias(other.alias)
 	{}
 
 	virtual ~AllLexem() {}

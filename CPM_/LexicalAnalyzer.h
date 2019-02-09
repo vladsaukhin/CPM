@@ -35,11 +35,13 @@ private:
 	checkConVal isConVal(const string& val, FLAGS& flag) const;
 	string whichTypeID() const;
 	int isDeclarationID(const string& val) const;
-	void stateInt();
-	void stateLetters();
-	void stateComment();
-	void stateAddLexem();
-	void stateDoubleSign(const char& sign);
+	bool stateInt();
+	bool stateLetters();
+	bool stateComment();
+	bool stateNewLine();
+	bool stateDot();
+	bool stateAddLexem();
+	bool stateDoubleSign(const char& sign);
 	AllLexem whichID(const string& val, int& block) const;
 	int countBlock() const;
 
