@@ -113,7 +113,7 @@ struct AllLexem: public ReservedLexem
 		os << std::setw(5) << dt.numOfLine
 			<< std::setw(22) << dt.val
 			<< std::setw(7) << dt.index
-			<< std::setw(7) << dt.ID
+			<< std::setw(7) << dt.numOfID
 			<< std::setw(13) << dt.type
 			<< std::setw(13) << dt.block;
 		return os;

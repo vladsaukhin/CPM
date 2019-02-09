@@ -573,7 +573,7 @@ void SyntaxAnalyzer::assignmentState(int & index)
 void SyntaxAnalyzer::expretionState(int& index, bool ifst)
 {
 
-	vector<allLexem> temp;
+	vector<AllLexem> temp;
 	int bracket = 0;
 	if (ifst)
 		bracket = 1;

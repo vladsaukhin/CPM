@@ -1,0 +1,7 @@
+1	In line 1 u have unexpected value [declaration variables]: expected identifier  but got  '0'
+2	In line 1 u have unexpected value [expretion]: expected identifier  but got  '/'
+3	In line 1 u have unexpected value[declaration variables]: expected identifier  but got  '0'
+4	In line 1 u have unexpected value [input state]: expected identifier  but got  '5'
+5	In line 1 u have unexpected value [if/while state]: expected '?' or 'do'  but got  '{'
+6	In line 1 u have unexpected value [call state]: expected identifier  but got  '6'
+7	In line 1 u have unexpected value [declaration variables]: expected identifier  but got  '0'
