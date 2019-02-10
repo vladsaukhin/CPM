@@ -155,20 +155,22 @@ struct AllLexem: public ReservedLexem
 
 };
 
-struct checkConVal {
+struct ConVal {
 
-	bool flag;
-	string val;
+	bool flag;     // is con val?
+	string val;		//type if yes
 
-	checkConVal(string v, bool i)
+	// is con val?
+	//type if yes
+	ConVal(string v, bool i)
 		:val(v), flag(i)
 	{}
 
-	checkConVal(const checkConVal& other)
+	ConVal(const ConVal& other)
 		:val(other.val), flag(other.flag)
 	{}
 
-	checkConVal& operator= (const checkConVal& other)
+	ConVal& operator= (const ConVal& other)
 	{
 		if (this != &other)
 		{
@@ -178,11 +180,11 @@ struct checkConVal {
 		return *this;
 	}
 
-	checkConVal(checkConVal&& other)
+	ConVal(ConVal&& other)
 		:val(std::move(other.val)), flag(other.flag)
 	{}
 
-	~checkConVal() {}
+	~ConVal() {}
 };
 
 struct Exept
@@ -227,21 +229,19 @@ struct Exept
 struct FLAGS {
 
 	bool unexpectedIdVal = false;
+	//taken leter before dot
 	bool unexpectedBehaviorBeforeDot = false;
+	//taken later after dot
 	bool unexpectedBehaviorAfterDot = false;
-	bool unexpectedBehaviorBeforeDoubleSign = false;
 	bool numStartFromNull = false;
 	bool unexpectedSignAfterDot = false;
-	bool unexpectedSignAfterSign = false;
 
 	FLAGS()
 		: unexpectedIdVal(false),
 		unexpectedBehaviorBeforeDot(false),
 		unexpectedBehaviorAfterDot(false),
 		unexpectedSignAfterDot(false),
-		unexpectedBehaviorBeforeDoubleSign(false),
-		numStartFromNull(false),
-		unexpectedSignAfterSign(false)
+		numStartFromNull(false)
 	{}
 
 	void SET_FALSE_ALL()
@@ -249,9 +249,7 @@ struct FLAGS {
 		unexpectedIdVal = false;
 		unexpectedBehaviorBeforeDot = false;
 		unexpectedBehaviorAfterDot = false;
-		unexpectedBehaviorBeforeDoubleSign = false;
 		numStartFromNull = false;
-		unexpectedSignAfterSign = false;
 		unexpectedSignAfterDot = false;
 	}
 

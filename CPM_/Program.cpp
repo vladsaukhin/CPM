@@ -45,9 +45,9 @@ void Program::lexicalAnalyzerTypeA()
 	lexicalAnalyzer->StartProcessing();
 	lexicalAnalyzer->ViewLogs();
 
-	lexicalAnalyzer->writeAllToFile();
-	lexicalAnalyzer->writeLexemToFile();
-	lexicalAnalyzer->writeConstToFile();
+	lexicalAnalyzer->WriteAllToFile();
+	lexicalAnalyzer->WriteLexemToFile();
+	lexicalAnalyzer->WriteConstToFile();
 
 	exept = lexicalAnalyzer->exept;
 	m_allLexem = lexicalAnalyzer->GetLexem();

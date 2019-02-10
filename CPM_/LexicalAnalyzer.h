@@ -11,9 +11,9 @@ public:
 	void StartProcessing() override;
 	void ViewLogs() override;
 
-	void writeAllToFile() const;
-	void writeLexemToFile() const;
-	void writeConstToFile() const;
+	void WriteAllToFile() const;
+	void WriteLexemToFile() const;
+	void WriteConstToFile() const;
 
 	vector<AllLexem> GetLexem() const
 	{
@@ -28,26 +28,38 @@ private:
 	LexicalAnalyzer& operator=(LexicalAnalyzer&&) = delete;
 
 private:
+
+	///Check
 	bool isLeter(const char& sign) const;
 	bool isNum(const char& sign) const;
 	bool isSign(const char& sign) const;
-	bool isSignDuplicate(const char& sign) const;
-	checkConVal isConVal(const string& val, FLAGS& flag) const;
-	string whichTypeID() const;
-	int isDeclarationID(const string& val) const;
+	void isCorrectSigns();
+	///Check
+
+	///States
 	bool stateInt();
 	bool stateLetters();
 	bool stateComment();
 	bool stateNewLine();
+	//include '.' and '..'
 	bool stateDot();
-	bool stateAddLexem();
-	bool stateDoubleSign(const char& sign);
+	//add sign and count brackets
+	bool stateSign(int&, int&, int&);
+	//using only for < > = !
+	void stateDoubleSign(const char& sign);
+	///States
+
+	///AddLexem
+	void stateAddLexem();
+	ConVal isConVal();
+	string whichTypeID() const;
+	int isDeclarationID(const string& val) const;	
 	AllLexem whichID(const string& val, int& block) const;
 	int countBlock() const;
+	///AddLexem
 
-	bool WasWriteToFileLexem( const std::vector<AllLexem>& out, const int& test, const int& bl) const;
-	void isCorrectSigns();
-	
+	bool wasWriteToFileLexem(const std::vector<AllLexem>& out, const int& test, const int& bl) const;
+	ReservedName whichAlias(const int&);
 public:
 	vector<Exept> exept;
 
@@ -58,8 +70,7 @@ private:
 	
 	const string m_alphabetEN = "etaoinshrdlcumwfgypbvkjxqz_ETAOINSHRDLCUMWFGYPBVKJXQZ";
 	const string m_num = "1234567890";
-	const string m_sign = "+-*/[],?:{}()";
-	const string m_signDuplicate = "+-*/<>=![],?:{}()";
+	const string m_sign = "+-*/,?:{}()[]";
 
 private:
 	string storage;
