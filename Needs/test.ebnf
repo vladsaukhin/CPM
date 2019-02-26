@@ -1,0 +1,49 @@
+Letter = "a" | "b" | "..." | "z".
+Digit = "0" | "1" | "..." | "9".
+SymbID = "_" | Letter.
+
+Int = Digit | Digit Int.
+Double = Int"." | Int"."Int | "."Int | ".".
+
+ConstValue = Int | Double.
+
+RelationalOper = "=="|"<"|"<="|">"| ">="| "!=".
+Identifier = symbID {[letter]} {[digit]}.
+
+ListDeclarationVar = Declaration ";" [{Declaration ";"}].
+Declaration = Assignment.
+
+Assignment = Identifier "=" Expression ";".
+IfStatement = "if" "(" LogicalExpression ")" ("?"|"then") ListOperator (":"|"else") ListOperator.
+Cycle = while "(" LogicalExpression ")" do ListOperator.
+
+Func = "def" Identifier "(" [DeclarationParam] ")" ListOperatorFunc.
+FuncCall = Identifier "(" [Identifier {"," Identifier}] ")" ";".
+Input = "in" "">>"" Identifier [{">>" Identifier}]";".
+Output = "out" "<<" (Expression | Endl) [ {{ "<<" Expression } | { "<<" Endl}} ]";".
+
+Operator = Assignment | Input | Output | IfStatement | Cycle | Func.
+
+DeclarationParam = Identifier {["," Identifier]}.
+EntranceParam = Expression {["," Expression]}.
+
+ListOperatorFunc =  "{" [ListDeclarationVar] [Operator ";"] [{ Operator ";"}] [return Expression] "}".
+ListOperator = "{" [ListDeclarationVar] [Operator ";" [{ Operator ";"}]] "}".
+
+Endl = "endl".
+
+
+LogicalExpression = LogicalTerm | LogicalExpression "OR" LogicalTerm
+LogicalTerm = LogivalSet | LogicalTerm "AND" LogicalSet.
+LogicalSet = BaseLE | "NOT" LogicalSet.
+BaseLE = Expression RelationalOper Expression.
+
+Expression = Term | Expression "+" Term | Expression "-" Term | "-" Term | (" Expression "+" Term ")" | "(" Expression "-" Term ")" | "(" "-" Term ")".
+Term = Set | Term "*" Set | Term "/" Set | "(" Term "*" Set ")" | "(" Term "/" Set ")".
+Set = Data | Set "^" Data | "(" Set "^" Data ")".
+Data = ["-"] Identifier | ["-"] ConstValue | Expression.
+
+ArrayType = Identifier "[" "]" "=" "{" EntranceParam "}" ";"
+Range = Expression ".." Expression.
+
+Program = main ListOperator.
