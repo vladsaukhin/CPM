@@ -143,7 +143,6 @@ void LexicalAnalyzer::isCorrectSigns()
 			unexpectedSign = "";
 		}
 	}
-
 }
 ///-----------------------------</ Check >------------------------------------------------------
 
@@ -244,7 +243,6 @@ bool LexicalAnalyzer::stateDot()
 				}
 			}
 		}
-
 	}
 	return exitCode;
 }
@@ -340,6 +338,13 @@ void LexicalAnalyzer::stateDoubleSign(const char & sign)
 		storage += "=";
 		++i;
 	}
+	
+	if ( i + 1 != length && m_buff.at(i + 1) == sign )
+	{
+		storage += sign;
+		++i;
+	}
+
 	stateAddLexem();
 }
 ///----------------------------</ States >------------------------------------------------------
@@ -401,23 +406,25 @@ void LexicalAnalyzer::stateAddLexem()
 
 
 	///------------------------------------------value-------------------------------------------------
+	
+	/*
 	AllLexem test = whichID(storage, corentBlock);
-	const string check = whichTypeID();
+	const string checkType = whichTypeID();
 	int block = countBlock();
 	if ( test.numOfID == -1 )
 	{
-		if ( check == "uint" || check == "int" || check == "udouble" || check == "double" )
+		if ( checkType == "uint" || checkType == "int" || checkType == "udouble" || checkType == "double" )
 		{
 			numOfIdentifier++;
 			if ( corentBlock <= block ) corentBlock = block;
-			m_allLexem.emplace_back(storage, 39, numOfLine, numOfIdentifier, check, block);
+			m_allLexem.emplace_back(storage, 39, numOfLine, numOfIdentifier, checkType, block);
 			flag.SET_FALSE_ALL();
 			storage = "";
 			return;
 		}
 		else
 		{
-			if ( check == "" )
+			if ( checkType == "" )
 			{
 				numOfIdentifier++;
 				m_allLexem.emplace_back(storage, 39, numOfLine, numOfIdentifier, "", test.block);
@@ -429,10 +436,10 @@ void LexicalAnalyzer::stateAddLexem()
 	}
 	else
 	{
-		if ( check == "uint" || check == "int" || check == "udouble" || check == "double" )
+		if ( checkType == "uint" || checkType == "int" || checkType == "udouble" || checkType == "double" )
 		{
 			numOfIdentifier++;
-			m_allLexem.emplace_back(storage, 39, numOfLine, numOfIdentifier, check, block);
+			m_allLexem.emplace_back(storage, 39, numOfLine, numOfIdentifier, checkType, block);
 			flag.SET_FALSE_ALL();
 			storage = "";
 			return;
@@ -445,6 +452,8 @@ void LexicalAnalyzer::stateAddLexem()
 			return;
 		}
 	}
+
+	*/
 
 	///------------------------------------------value-------------------------------------------------
 }
@@ -481,22 +490,6 @@ ConVal LexicalAnalyzer::isConVal()
 	return checkObj;
 }
 
-string LexicalAnalyzer::whichTypeID() const
-{
-	for ( auto it = m_allLexem.rbegin(); it != m_allLexem.rend(); ++it )
-	{
-		if ( it->index == 17 || it->index == 18 || it->index == 19 || it->index == 20 || it->index == 21 ) break;
-		if ( it->index == 40 || it->index == 39 || it->index == 27 || it->index == 28 )
-		{
-			continue;
-		}
-		if ( it->index == 1 || it->index == 2 || it->index == 3 || it->index == 4 )
-			return it->val;
-		else return "";
-	}
-	return "";
-}
-
 int LexicalAnalyzer::isDeclarationID(const string & val) const
 {
 	for ( const auto& item : m_allLexem )
@@ -507,47 +500,6 @@ int LexicalAnalyzer::isDeclarationID(const string & val) const
 	return -1;
 }
 
-AllLexem LexicalAnalyzer::whichID(const string & val, int& block) const
-{
-	AllLexem temp;
-	int countBlock = 1;
-
-	for ( auto it = m_allLexem.begin(); it != m_allLexem.end(); ++it )
-	{
-		if ( it->index == 20 )
-		{
-			countBlock++;
-			continue;
-		}
-		if ( it->val == val && it->index == 39 && it->block == block )
-		{
-			temp.numOfID = it->numOfID;
-			temp.index = it->index;
-			temp.numOfLine = it->numOfLine;
-			temp.type = it->type;
-			temp.val = it->val;
-			temp.block = it->block;
-			return temp;
-		}
-	}
-
-	temp.numOfID = -1;
-	temp.block = countBlock;
-	return temp;
-}
-
-int LexicalAnalyzer::countBlock() const
-{
-	int countBlock = 1;
-	for ( auto it = m_allLexem.begin(); it != m_allLexem.end(); ++it )
-	{
-		if ( it->index == 20 )
-		{
-			countBlock++;
-		}
-	}
-	return countBlock;
-}
 ///---------------------------</ AddLExem >-----------------------------------------------------
 
 
@@ -564,20 +516,26 @@ ReservedName LexicalAnalyzer::whichAlias(const int& ali)
 {
 	switch (ali)
 	{
-	case 1: return ReservedName::_int; break;
-	case 2: return ReservedName::_double; break;
-	case 3: return ReservedName::_uint; break;
-	case 4: return ReservedName::_udouble; break;
-	case 5: return ReservedName::_in; break;
-	case 7: return ReservedName::_out; break;
-	case 9: return ReservedName::_while; break;
-	case 10: return ReservedName::_do; break;
-	case 11: return ReservedName::_if; break;
-	case 12: return ReservedName::_return; break;
-	case 14: return ReservedName::_endl; break;
-	case 16: return ReservedName::_main; break;
+	case 1: return ReservedName::_def; break;
+	case 3: return ReservedName::_in; break;
+	case 5: return ReservedName::_out; break;
+	case 7: return ReservedName::_while; break;
+	case 8: return ReservedName::_do; break;
+	case 9: return ReservedName::_if; break;
+	case 10: return ReservedName::_return; break;
+	case 11: return ReservedName::_then; break;
+	case 12: return ReservedName::_endl; break;
+	case 13: return ReservedName::_else; break;
+	case 34: return ReservedName::_AND; break;
+	case 35: return ReservedName::_OR; break;
+	case 36: return ReservedName::_NOT; break;
+	case 37: return ReservedName::_main; break;
+	case 2:
+	case 4:
 	case 6:
-	case 8:
+	case 14:
+	case 15:
+	case 16:
 	case 17:
 	case 18:
 	case 19:
@@ -595,10 +553,6 @@ ReservedName LexicalAnalyzer::whichAlias(const int& ali)
 	case 31:
 	case 32:
 	case 33:
-	case 34:
-	case 35:
-	case 36:
-	case 37:
 	case 38: return ReservedName::_operator; break;
 	default:
 		return ReservedName::_none; break;
@@ -607,7 +561,6 @@ ReservedName LexicalAnalyzer::whichAlias(const int& ali)
 
 void LexicalAnalyzer::WriteAllToFile() const
 {
-	//remove("__out__.txt");
 	std::ofstream fout("./Result/Lexems.txt");
 	fout << "Iter |" << "  Num Line" << "          Lexem     " << "  Index" << "   Id/Con" << "      Type      " << " Block" <<  std::endl;
 	for (size_t i = 0; i < m_allLexem.size(); i++)
@@ -621,14 +574,13 @@ void LexicalAnalyzer::WriteAllToFile() const
 
 void LexicalAnalyzer::WriteLexemToFile() const
 {
-	//remove("out.txt");
 	std::ofstream fout("./Result/Variables.txt");
 	std::vector<AllLexem> out;
 	fout << "  Num Line" << "          Lexem     " << "  Index" << "   Id/Con" << "      Type      " << " Block" << std::endl;
 	for (size_t i = 0; i < m_allLexem.size(); i++)
 	{
 
-		if (m_allLexem.at(i).index == 39 && !wasWriteToFileLexem(out, m_allLexem.at(i).numOfID, m_allLexem.at(i).block))
+		if (m_allLexem.at(i).alias == ReservedName::_Ind && !wasWriteToFileLexem(out, m_allLexem.at(i).numOfID, m_allLexem.at(i).block))
 		{
 			out.push_back(m_allLexem.at(i));
 			fout << m_allLexem.at(i) << std::endl;
@@ -644,7 +596,7 @@ void LexicalAnalyzer::WriteConstToFile() const
 	fout << "  Num Line" << "          Lexem     " << "  Index" << "   Id/Con" << "      Type      " << " Block" << std::endl;
 	for ( const AllLexem& item : m_allLexem )
 	{
-		if ( item.index == 40 )
+		if ( item.alias == ReservedName::_Con )
 		{
 			fout << item << std::endl;
 		}

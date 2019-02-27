@@ -52,10 +52,8 @@ private:
 	///AddLexem
 	void stateAddLexem();
 	ConVal isConVal();
-	string whichTypeID() const;
 	int isDeclarationID(const string& val) const;	
-	AllLexem whichID(const string& val, int& block) const;
-	int countBlock() const;
+
 	///AddLexem
 
 	bool wasWriteToFileLexem(const std::vector<AllLexem>& out, const int& test, const int& bl) const;

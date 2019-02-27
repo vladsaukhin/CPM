@@ -1,44 +1,58 @@
-int SetSumUInt(uint asd,uint sa, uint dsa);
-uint rtyuu();
 
-main {
-
-	int 0 array [5..9];
-	uint result = /;
-	int a, 0 = 55.7, f/2;
-	uint2; c = .;
-	udouble sum=.;
-	in SET 5 SET c;
-	out GET 5*9-9 GET endl;
-	
-	if(sum)  //true
-	{ 
-		int a;
-		sum = 0.;
-		a = 5;
-	} 
-		://false
-	{
-		int k = 8;
-		sum = k+.0;
-		if (a == 0) ? 
-		{	
-			a= a;
-		}
-	}
-	
-	while(a < 5) do {
-		b = SetSumUInt(a, 6); 
-		out GET b GET a GET endl;
-		a = a + 1;
-	}
-	
+def Sum(asd, dsa)
+{ 
+	res = 0;
+	res = asd + dsa;
+	return res;
 }
 
-uint SetSumUInt(uint asd, uint dsa)
+def Sum2(asd, dsa)
 { 
-	int 0 array [5..9];
-	uint result = 0;
-	result = asd + dsa;
-	return asd;
+	return asd + dsa;
+}
+
+def OutSum(asd, dsa)
+{ 
+	out << Sum(asd, dsa);
+}
+
+main 
+{
+	array[] = {5, 9};
+	result = 12;
+	a = 2.;
+	b = .3;
+	c = .;
+
+	sum = Sum2(a,b);
+	OutSum(b,a);
+
+	in >> a >> c;
+	out << 5*9-9 << endl;
+	
+	while(NOT -5 != -5.0) do
+	{
+		if (5 > 3 AND (78 < 100 OR 1 != 2)) ? //true
+		{ 
+			if(5 == 5) then
+			{
+				a = 5;
+			}
+		} 
+			://false
+		{
+			if (5 > 3 AND (78 < 100 OR 1 != 2)) then //true
+			{ 
+				if(5 == 5) then
+				{
+					a = 5;
+				}
+			} 
+			else	//false
+			{
+				b = 6;
+			}
+		}
+	}
+		
 }

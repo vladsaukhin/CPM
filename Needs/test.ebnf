@@ -14,7 +14,7 @@ ListDeclarationVar = Declaration ";" [{Declaration ";"}].
 Declaration = Assignment.
 
 Assignment = Identifier "=" Expression ";".
-IfStatement = "if" "(" LogicalExpression ")" ("?"|"then") ListOperator (":"|"else") ListOperator.
+IfStatement = "if" "(" LogicalExpression ")" ("?"|"then") [ListOperator (":"|"else")] ListOperator.
 Cycle = while "(" LogicalExpression ")" do ListOperator.
 
 Func = "def" Identifier "(" [DeclarationParam] ")" ListOperatorFunc.

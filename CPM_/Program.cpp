@@ -35,7 +35,7 @@ void Program::InitStateCode()
 void Program::Start(const TypeAnalyzer& syntaxAnalyzerType)
 {
 	lexicalAnalyzerTypeA();
-	syntaxAnalyzerType__( syntaxAnalyzerType );
+	//syntaxAnalyzerType__( syntaxAnalyzerType );
 }
 
 void Program::lexicalAnalyzerTypeA()
@@ -43,11 +43,19 @@ void Program::lexicalAnalyzerTypeA()
 	std::shared_ptr<LexicalAnalyzer> lexicalAnalyzer = std::make_shared<LexicalAnalyzer>( m_buff );
 
 	lexicalAnalyzer->StartProcessing();
+
 	lexicalAnalyzer->ViewLogs();
+	if(exept.size() != 0)
+		ShellExecute(0, 0, "C:\master\C++\CPM_\CPM_\Logs\LexicalLogsTypeA.txt", 0, 0, SW_SHOW);
 
 	lexicalAnalyzer->WriteAllToFile();
+	ShellExecute(0, 0, "C:\master\C++\CPM_\CPM_\Result\Lexems.txt", 0, 0, SW_SHOW);
+	
 	lexicalAnalyzer->WriteLexemToFile();
+	ShellExecute(0, 0, "C:\master\C++\CPM_\CPM_\Result\Variables.txt", 0, 0, SW_SHOW); 
+	
 	lexicalAnalyzer->WriteConstToFile();
+	ShellExecute(0, 0, "C:\master\C++\CPM_\CPM_\Result\Constants.txt", 0, 0, SW_SHOW);
 
 	exept = lexicalAnalyzer->exept;
 	m_allLexem = lexicalAnalyzer->GetLexem();

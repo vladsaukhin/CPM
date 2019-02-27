@@ -6,6 +6,8 @@
 #include<iomanip>
 #include<stack>
 
+#include<Windows.h>
+
 #include"Interfaces.h"
 
 using std::ifstream;
@@ -27,17 +29,19 @@ enum class TypeAnalyzer
 enum class ReservedName
 {
 	_none,
-	_int,
-	_double,
-	_uint,
-	_udouble,
+	_def,
 	_in,
 	_out,
 	_while,
 	_do,
 	_if,
 	_return,
+	_then,
 	_endl,
+	_else,
+	_AND,
+	_OR,
+	_NOT,
 	_main,
 	_Ind,
 	_Con,
