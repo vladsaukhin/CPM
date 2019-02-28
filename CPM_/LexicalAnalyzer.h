@@ -79,5 +79,6 @@ private:
 	int numOfConstVal;
 	int numOfIdentifier;
 	int numOfLine;
+	std::stack<bool> brackets;
 };
 

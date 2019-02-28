@@ -36,3 +36,5 @@ OR
 NOT
 main
 ..
+int
+double

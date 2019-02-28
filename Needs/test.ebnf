@@ -22,7 +22,7 @@ FuncCall = Identifier "(" [Identifier {"," Identifier}] ")" ";".
 Input = "in" "">>"" Identifier [{">>" Identifier}]";".
 Output = "out" "<<" (Expression | Endl) [ {{ "<<" Expression } | { "<<" Endl}} ]";".
 
-Operator = Assignment | Input | Output | IfStatement | Cycle | Func.
+Operator = Assignment | Input | Output | IfStatement | Cycle | Func | FuncCall | Declaration | ArrayType | ArrayCall.
 
 DeclarationParam = Identifier {["," Identifier]}.
 EntranceParam = Expression {["," Expression]}.
@@ -31,7 +31,6 @@ ListOperatorFunc =  "{" [ListDeclarationVar] [Operator ";"] [{ Operator ";"}] [r
 ListOperator = "{" [ListDeclarationVar] [Operator ";" [{ Operator ";"}]] "}".
 
 Endl = "endl".
-
 
 LogicalExpression = LogicalTerm | LogicalExpression "OR" LogicalTerm
 LogicalTerm = LogivalSet | LogicalTerm "AND" LogicalSet.
@@ -44,6 +43,7 @@ Set = Data | Set "^" Data | "(" Set "^" Data ")".
 Data = ["-"] Identifier | ["-"] ConstValue | Expression.
 
 ArrayType = Identifier "[" "]" "=" "{" EntranceParam "}" ";"
+ArrayCall = Identifier "[" (Expression | Range) "]" ";".
 Range = Expression ".." Expression.
 
 Program = main ListOperator.

@@ -317,8 +317,8 @@ bool LexicalAnalyzer::stateSign(int& countBracket1, int& countBracket2, int& cou
 			case ')': countBracket1--; break;
 			case '[': countBracket2++; break;
 			case ']': countBracket2--; break;
-			case '{': countBracket3++; break;
-			case '}': countBracket3--; break;
+			case '{': brackets.push(true); break;
+			case '}': brackets.push(false); break;
 			}
 		}
 	}
@@ -353,6 +353,9 @@ void LexicalAnalyzer::stateDoubleSign(const char & sign)
 ///---------------------------< AddLExem >------------------------------------------------------
 void LexicalAnalyzer::stateAddLexem()
 {
+	if ( storage == "{" && m_allLexem.size() > 1 && m_allLexem.at(m_allLexem.size() - 1).index != 2 ) // 2 '='
+		corentBlock += 1;
+
 	if ( flag.unexpectedIdVal == true )
 	{
 		exept.emplace_back(storage, numOfLine, "unexpected id val");
@@ -407,6 +410,8 @@ void LexicalAnalyzer::stateAddLexem()
 
 	///------------------------------------------value-------------------------------------------------
 	
+
+
 	/*
 	AllLexem test = whichID(storage, corentBlock);
 	const string checkType = whichTypeID();

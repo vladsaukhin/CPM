@@ -41,5 +41,6 @@ private:
 	string m_buff;								//source code storage
 	string m_fileName;						//name of source file
 	vector<AllLexem> m_allLexem;			//all found tokens
+	bool m_builded;
 };
 

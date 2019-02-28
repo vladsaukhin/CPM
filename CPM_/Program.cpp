@@ -4,7 +4,8 @@ Program::~Program()
 {}
 
 Program::Program( const string & filename )
-	:m_fileName( filename )
+	: m_fileName( filename )
+	, m_builded( false )
 {}
 
 void Program::SaveStateCode() const
@@ -34,8 +35,14 @@ void Program::InitStateCode()
 
 void Program::Start(const TypeAnalyzer& syntaxAnalyzerType)
 {
+	cout << "###########################################################################################################" << endl;
+	cout << "### Build started: Project: " << m_fileName << endl;
+
 	lexicalAnalyzerTypeA();
 	//syntaxAnalyzerType__( syntaxAnalyzerType );
+
+	cout << "### Done building project " << m_fileName << " -- " << (m_builded ? "":"FAILED") <<endl;
+	cout << "###########################################################################################################" << endl;
 }
 
 void Program::lexicalAnalyzerTypeA()
