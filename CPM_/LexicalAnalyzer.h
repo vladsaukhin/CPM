@@ -75,7 +75,7 @@ private:
 	int corentBlock;
 	FLAGS flag;
 	const size_t length;
-	size_t i;
+	size_t i_class;
 	int numOfConstVal;
 	int numOfIdentifier;
 	int numOfLine;

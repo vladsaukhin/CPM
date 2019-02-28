@@ -67,32 +67,39 @@ void LexicalAnalyzer::ViewLogs()
 
 void LexicalAnalyzer::StartProcessing() 
 {
-	int countBracket1 = 0; // like ()   |   0 is true else false
-	int countBracket2 = 0; // like []   |   0 is true else false
-	int countBracket3 = 0; // like {}   |   0 is true else false
-	
-	for (i = 0; i < length; i++)
+	try
 	{
-		if ( stateComment() ) continue;
-		if ( stateNewLine() ) continue;
-		if ( stateLetters() ) continue;
-		if ( stateInt() )     continue;
-		if ( stateDot() )     continue;
-		if ( stateSign(countBracket1, countBracket2, countBracket3) ) continue;
-	}
 
-	//update!!!!!!!!!!!!!!!
-	if (countBracket3 < 0)
-	{
-		exept.emplace_back("", 0, "unexpected amount of {");
-		countBracket3 = 0;
-	}
-	if (countBracket3 > 0)
-	{
-		exept.emplace_back("", 0, "unexpected amount of }");
-		countBracket3 = 0;
-	}
+		int countBracket1 = 0; // like ()   |   0 is true else false
+		int countBracket2 = 0; // like []   |   0 is true else false
+		int countBracket3 = 0; // like {}   |   0 is true else false
 
+		for ( i_class = 0; i_class < length; i_class++ )
+		{
+			if ( stateComment() ) continue;
+			if ( stateNewLine() ) continue;
+			if ( stateLetters() ) continue;
+			if ( stateInt() )     continue;
+			if ( stateDot() )     continue;
+			if ( stateSign(countBracket1, countBracket2, countBracket3) ) continue;
+		}
+
+		//update!!!!!!!!!!!!!!!
+		if ( countBracket3 < 0 )
+		{
+			exept.emplace_back("", 0, "unexpected amount of {");
+			countBracket3 = 0;
+		}
+		if ( countBracket3 > 0 )
+		{
+			exept.emplace_back("", 0, "unexpected amount of }");
+			countBracket3 = 0;
+		}
+	}
+	catch ( std::exception& e )
+	{
+		cerr << e.what() << endl;
+	}
 }
 
 
@@ -151,11 +158,11 @@ void LexicalAnalyzer::isCorrectSigns()
 bool LexicalAnalyzer::stateInt()
 {
 	bool exitCode = false;
-	while ( i != length && isNum(m_buff.at(i)) )
+	while ( i_class != length && isNum(m_buff.at(i_class)) )
 	{
 		exitCode = true;
-		storage += m_buff.at(i);
-		i += 1;
+		storage += m_buff.at(i_class);
+		i_class += 1;
 	}
 	return exitCode;
 }
@@ -163,14 +170,14 @@ bool LexicalAnalyzer::stateInt()
 bool LexicalAnalyzer::stateLetters()
 {
 	bool exitCode = false;
-	if ( i != 0 && isNum(m_buff.at(i - 1)) && isLeter(m_buff.at(i)) )
+	if ( i_class != 0 && isNum(m_buff.at(i_class - 1)) && isLeter(m_buff.at(i_class)) )
 		flag.unexpectedIdVal = true;
 
-	while ( i != length && isLeter(m_buff.at(i)) )
+	while ( i_class != length && isLeter(m_buff.at(i_class)) )
 	{
 		exitCode = true;
-		storage += m_buff.at(i);
-		i += 1;
+		storage += m_buff.at(i_class);
+		i_class += 1;
 	}
 
 	return exitCode;
@@ -178,10 +185,10 @@ bool LexicalAnalyzer::stateLetters()
 
 bool LexicalAnalyzer::stateComment()
 {
-	if ( m_buff.at(i) == '/' &&  i + 1 != length && m_buff.at(i + 1) == '/' )
+	if ( m_buff.at(i_class) == '/' &&  i_class + 1 != length && m_buff.at(i_class + 1) == '/' )
 	{
-		i += 2;
-		while ( i != length && m_buff.at(i) != '\n' ) i++;
+		i_class += 2;
+		while ( i_class != length && m_buff.at(i_class) != '\n' ) i_class++;
 		return true;
 	}
 	return false;
@@ -189,7 +196,7 @@ bool LexicalAnalyzer::stateComment()
 
 bool LexicalAnalyzer::stateNewLine()
 {
-	if ( m_buff.at(i) == '\n' )
+	if ( m_buff.at(i_class) == '\n' )
 	{
 		numOfLine++;
 		return true;
@@ -201,18 +208,18 @@ bool LexicalAnalyzer::stateDot()
 {
 	bool exitCode = false;
 
-	if ( m_buff.at(i) == '.' && i + 1 != length && m_buff.at(i + 1) == '.' )
+	if ( m_buff.at(i_class) == '.' && i_class + 1 != length && m_buff.at(i_class + 1) == '.' )
 	{
 		if ( storage != "" )
 			stateAddLexem();
 		storage = "..";
 		stateAddLexem();
-		i++;
+		i_class++;
 		exitCode = true;
 	}
 	else
 	{
-		if ( m_buff.at(i) == '.' && i + 1 != length && m_buff.at(i + 1) != '.' )
+		if ( m_buff.at(i_class) == '.' && i_class + 1 != length && m_buff.at(i_class + 1) != '.' )
 		{
 			exitCode = true;
 			for ( const char& item : storage )
@@ -224,15 +231,15 @@ bool LexicalAnalyzer::stateDot()
 				}
 			}
 			if ( storage.length() == 0 ) storage += '0';
-			storage += m_buff.at(i);
-			i++;
-			if ( i != length && isNum(m_buff.at(i)) )
+			storage += m_buff.at(i_class);
+			i_class++;
+			if ( i_class != length && isNum(m_buff.at(i_class)) )
 			{
 				stateInt();
 			}
 			else
 			{
-				if ( !isLeter(m_buff.at(i)) )
+				if ( !isLeter(m_buff.at(i_class)) )
 				{
 					storage += '0';
 					stateAddLexem();
@@ -250,7 +257,7 @@ bool LexicalAnalyzer::stateDot()
 bool LexicalAnalyzer::stateSign(int& countBracket1, int& countBracket2, int& countBracket3)
 {
 	bool exitCode = false;
-	const char sign = m_buff.at(i);
+	const char sign = m_buff.at(i_class);
 
 	switch ( sign )
 	{
@@ -260,12 +267,12 @@ bool LexicalAnalyzer::stateSign(int& countBracket1, int& countBracket2, int& cou
 		exitCode = true;
 		if ( storage != "" )
 			stateAddLexem();
-		i++;
-		while ( i != length && ( m_buff.at(i) == ' ' || m_buff.at(i) == '\t' ) )
+		i_class++;
+		while ( i_class != length && ( m_buff.at(i_class) == ' ' || m_buff.at(i_class) == '\t' ) )
 		{
-			i++;
+			i_class++;
 		}
-		i--;
+		i_class--;
 		break;
 	}
 	case ';':
@@ -333,16 +340,16 @@ void LexicalAnalyzer::stateDoubleSign(const char & sign)
 		stateAddLexem();
 
 	storage = sign;
-	if ( i + 1 != length && m_buff.at(i + 1) == '=' )
+	if ( i_class + 1 != length && m_buff.at(i_class + 1) == '=' )
 	{
 		storage += "=";
-		++i;
+		++i_class;
 	}
 	
-	if ( i + 1 != length && m_buff.at(i + 1) == sign )
+	if ( i_class + 1 != length && m_buff.at(i_class + 1) == sign )
 	{
 		storage += sign;
-		++i;
+		++i_class;
 	}
 
 	stateAddLexem();

@@ -41,7 +41,7 @@ void Program::Start(const TypeAnalyzer& syntaxAnalyzerType)
 	lexicalAnalyzerTypeA();
 	//syntaxAnalyzerType__( syntaxAnalyzerType );
 
-	cout << "### Done building project " << m_fileName << " -- " << (m_builded ? "":"FAILED") <<endl;
+	cout << "### Done building project " << m_fileName << (m_builded ? "":" -- FAILED") <<endl;
 	cout << "###########################################################################################################" << endl;
 }
 
