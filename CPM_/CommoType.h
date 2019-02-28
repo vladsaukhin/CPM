@@ -5,6 +5,7 @@
 #include<fstream>
 #include<iomanip>
 #include<stack>
+#include<map>
 
 #include<Windows.h>
 
@@ -19,6 +20,7 @@ using std::cin;
 using std::cerr;
 using std::endl;
 using std::stack;
+using std::map;
 
 enum class TypeAnalyzer
 {
@@ -43,83 +45,49 @@ enum class ReservedName
 	_OR,
 	_NOT,
 	_main,
+	_int,
+	_double,
 	_Ind,
 	_Con,
 	_operator
 };
 
-struct ReservedLexem
+struct AllLexem
 {
 	string val;
 	int index;
-
-	ReservedLexem()
-		: val("")
-		, index()
-	{}
-
-	ReservedLexem(const string& _val, int _index)
-		: val(_val)
-		, index(_index)
-	{}
-
-	ReservedLexem(const ReservedLexem& other)
-		: val(other.val)
-		, index(other.index)
-	{}
-
-	ReservedLexem(ReservedLexem&& other)
-		: val(std::move(other.val))
-		, index(other.index)
-	{}
-
-	virtual ~ReservedLexem()
-	{}
-
-};
-
-struct AllLexem: public ReservedLexem
-{
 	int numOfLine;
 	int numOfID;
 	string type;
-	int block;
 	ReservedName alias;
 
 	AllLexem()
-		: ReservedLexem()
+		: val("")
+		, index()
 		, numOfLine()
 		, numOfID()
 		, type("")
-		, block()
 		, alias(ReservedName::_none)
 	{}
 
-	AllLexem(const string& _val, int _index, int numLine, int numID, const string& _type, int _block)
-		: ReservedLexem(_val, _index)
+	AllLexem(const string& _val, int _index, int numLine, int numID, const string& _type, ReservedName _alias)
+		: val(_val)
+		, index(_index)
 		, numOfLine(numLine)
 		, numOfID(numID)
 		, type(_type)
-		, block(_block)
-	{}
-
-	AllLexem(const string& _val, int _index, int numLine, int numID, const string& _type, int _block, ReservedName _alias)
-		: ReservedLexem(_val, _index)
-		, numOfLine(numLine)
-		, numOfID(numID)
-		, type(_type)
-		, block(_block)
 		, alias(_alias)
 	{}
 
 	AllLexem(const AllLexem& other)
-		: ReservedLexem(other)
+		: val(other.val)
+		, index(other.index)
 		, numOfLine(other.numOfLine)
 		, numOfID(other.numOfID)
 		, type(other.type)
-		, block(other.block)
 		, alias(other.alias)
 	{}
+
 	AllLexem& operator= (const AllLexem& other)
 	{
 		if (this != &other) // защита от неправильного самоприсваивания
@@ -129,18 +97,17 @@ struct AllLexem: public ReservedLexem
 			numOfLine = other.numOfLine;
 			numOfID = other.numOfID;
 			type = other.type;
-			block = other.block;
 			alias = other.alias;
 		}
 		return *this;
 	}
 
 	AllLexem( AllLexem&& other)
-		: ReservedLexem(other)
+		: val(std::move(other.val))
+		, index(other.index)
 		, numOfLine(other.numOfLine)
 		, numOfID(other.numOfID)
 		, type(std::move(other.type))
-		, block(other.block)
 		, alias(other.alias)
 	{}
 
@@ -152,11 +119,9 @@ struct AllLexem: public ReservedLexem
 			<< std::setw(22) << dt.val
 			<< std::setw(7) << dt.index
 			<< std::setw(7) << dt.numOfID
-			<< std::setw(13) << dt.type
-			<< std::setw(13) << dt.block;
+			<< std::setw(13) << dt.type;
 		return os;
 	}
-
 };
 
 struct ConVal {

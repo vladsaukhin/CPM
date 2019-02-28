@@ -89,7 +89,7 @@ void MPA::ViewLogs()
 int MPA::next_step( int next_state, int i )
 {
 
-	int count = 0;
+	size_t count = 0;
 	for ( int j = 0; j < m_mpa.size(); j++ )
 	{
 		if ( m_mpa[j].thisState == next_state )

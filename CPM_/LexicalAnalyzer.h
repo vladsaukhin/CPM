@@ -52,18 +52,16 @@ private:
 	///AddLexem
 	void stateAddLexem();
 	ConVal isConVal();
-	int isDeclarationID(const string& val) const;	
 
 	///AddLexem
 
-	bool wasWriteToFileLexem(const std::vector<AllLexem>& out, const int& test, const int& bl) const;
 	ReservedName whichAlias(const int&);
 public:
 	vector<Exept> exept;
 
 private:
 	string m_buff;
-	vector<ReservedLexem> m_lexem;
+	map<string, int> m_reserveLexem;
 	vector<AllLexem> m_allLexem;
 	
 	const string m_alphabetEN = "etaoinshrdlcumwfgypbvkjxqz_ETAOINSHRDLCUMWFGYPBVKJXQZ";
@@ -72,13 +70,11 @@ private:
 
 private:
 	string storage;
-	int corentBlock;
 	FLAGS flag;
 	const size_t length;
 	size_t i_class;
 	int numOfConstVal;
 	int numOfIdentifier;
 	int numOfLine;
-	std::stack<bool> brackets;
 };
 

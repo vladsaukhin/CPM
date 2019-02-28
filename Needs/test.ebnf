@@ -4,14 +4,14 @@ SymbID = "_" | Letter.
 
 Int = Digit | Digit Int.
 Double = Int"." | Int"."Int | "."Int | ".".
-
+Type = "int" | "double".
 ConstValue = Int | Double.
 
 RelationalOper = "=="|"<"|"<="|">"| ">="| "!=".
 Identifier = symbID {[letter]} {[digit]}.
 
 ListDeclarationVar = Declaration ";" [{Declaration ";"}].
-Declaration = Assignment.
+Declaration = Identifier ["(" Type ")"] "=" Expression ";".
 
 Assignment = Identifier "=" Expression ";".
 IfStatement = "if" "(" LogicalExpression ")" ("?"|"then") [ListOperator (":"|"else")] ListOperator.
@@ -22,13 +22,13 @@ FuncCall = Identifier "(" [Identifier {"," Identifier}] ")" ";".
 Input = "in" "">>"" Identifier [{">>" Identifier}]";".
 Output = "out" "<<" (Expression | Endl) [ {{ "<<" Expression } | { "<<" Endl}} ]";".
 
-Operator = Assignment | Input | Output | IfStatement | Cycle | Func | FuncCall | Declaration | ArrayType | ArrayCall.
+Statement = Assignment | Input | Output | IfStatement | Cycle | Func | FuncCall | Declaration | ArrayType | ArrayCall.
 
 DeclarationParam = Identifier {["," Identifier]}.
 EntranceParam = Expression {["," Expression]}.
 
-ListOperatorFunc =  "{" [ListDeclarationVar] [Operator ";"] [{ Operator ";"}] [return Expression] "}".
-ListOperator = "{" [ListDeclarationVar] [Operator ";" [{ Operator ";"}]] "}".
+ListOperatorFunc =  "{" [ListDeclarationVar] [Statement ";"] [{ Statement ";"}] [return Expression] "}".
+ListOperator = "{" [ListDeclarationVar] [Statement ";" [{ Statement ";"}]] "}".
 
 Endl = "endl".
 

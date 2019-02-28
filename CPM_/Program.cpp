@@ -35,14 +35,14 @@ void Program::InitStateCode()
 
 void Program::Start(const TypeAnalyzer& syntaxAnalyzerType)
 {
-	cout << "###########################################################################################################" << endl;
-	cout << "### Build started: Project: " << m_fileName << endl;
+	cout << "###########################################################################################################\n#" << endl;
+	cout << "### Build started: Project: " << m_fileName << endl << endl;
 
 	lexicalAnalyzerTypeA();
 	//syntaxAnalyzerType__( syntaxAnalyzerType );
 
-	cout << "### Done building project " << m_fileName << (m_builded ? "":" -- FAILED") <<endl;
-	cout << "###########################################################################################################" << endl;
+	cout << "### Done building project " << m_fileName << ( m_builded ? "" : " -- FAILED" ) << endl << endl;
+	cout << "#\n###########################################################################################################" << endl;
 }
 
 void Program::lexicalAnalyzerTypeA()

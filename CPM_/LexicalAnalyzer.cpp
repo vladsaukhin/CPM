@@ -1,11 +1,12 @@
 #include "LexicalAnalyzer.h"
 
+#pragma region Init
+
 LexicalAnalyzer::LexicalAnalyzer(const string& buff)
 	: storage("")
 	, m_buff(buff)
-	, corentBlock(1)
 	, length(buff.length())
-	, i(0)
+	, i_class(0)
 	, numOfIdentifier(0)
 	, numOfConstVal(0)
 	, numOfLine(1)
@@ -20,8 +21,9 @@ LexicalAnalyzer::LexicalAnalyzer(const string& buff)
 			while ( !fin.eof() )
 			{
 				getline(fin, reader);
-				if(reader.size() != 0)
-					m_lexem.emplace_back(reader, i);
+				if ( reader.size() != 0 )
+					m_reserveLexem.insert(std::pair<string, int>(reader, i));
+
 				i+=1;
 			}
 
@@ -40,7 +42,7 @@ LexicalAnalyzer::LexicalAnalyzer(const string& buff)
 	}
 	catch ( std::exception& e )
 	{
-		cerr << e.what() << endl;
+		cerr << "### Exeption:  " << e.what() << endl;
 	}
 }
 
@@ -61,7 +63,7 @@ void LexicalAnalyzer::ViewLogs()
 	}
 	catch ( std::exception& e )
 	{
-		cerr << e.what() << endl;
+		cerr << "### Exeption:  " << e.what() << endl;
 	}
 }
 
@@ -84,13 +86,12 @@ void LexicalAnalyzer::StartProcessing()
 			if ( stateSign(countBracket1, countBracket2, countBracket3) ) continue;
 		}
 
-		//update!!!!!!!!!!!!!!!
 		if ( countBracket3 < 0 )
 		{
 			exept.emplace_back("", 0, "unexpected amount of {");
 			countBracket3 = 0;
 		}
-		if ( countBracket3 > 0 )
+		else if ( countBracket3 > 0 )
 		{
 			exept.emplace_back("", 0, "unexpected amount of }");
 			countBracket3 = 0;
@@ -98,11 +99,13 @@ void LexicalAnalyzer::StartProcessing()
 	}
 	catch ( std::exception& e )
 	{
-		cerr << e.what() << endl;
+		cerr << "### Exeption:  " << e.what() << endl;
 	}
 }
 
+#pragma endregion Init
 
+#pragma region Check
 ///------------------------------< Check >------------------------------------------------------
 bool LexicalAnalyzer::isLeter(const char & sign) const
 {
@@ -152,8 +155,9 @@ void LexicalAnalyzer::isCorrectSigns()
 	}
 }
 ///-----------------------------</ Check >------------------------------------------------------
+#pragma endregion Check
 
-
+#pragma region States
 ///------------------------------< States >-----------------------------------------------------
 bool LexicalAnalyzer::stateInt()
 {
@@ -320,12 +324,20 @@ bool LexicalAnalyzer::stateSign(int& countBracket1, int& countBracket2, int& cou
 			stateAddLexem();
 			switch ( sign )
 			{
-			case '(': countBracket1++; break;
+			case '(': 
+				countBracket1++;
+				if ( m_allLexem.at(m_allLexem.size() - 1).alias == ReservedName::_Ind )
+					m_allLexem.at(m_allLexem.size() - 1).type = "func";
+				break;
 			case ')': countBracket1--; break;
-			case '[': countBracket2++; break;
+			case '[': 
+				countBracket2++;
+				if ( m_allLexem.at(m_allLexem.size() - 1).alias == ReservedName::_Ind )
+					m_allLexem.at(m_allLexem.size() - 1).type = "arr";
+				break;
 			case ']': countBracket2--; break;
-			case '{': brackets.push(true); break;
-			case '}': brackets.push(false); break;
+			case '{': countBracket3++; break;
+			case '}': countBracket3--; break;
 			}
 		}
 	}
@@ -355,18 +367,16 @@ void LexicalAnalyzer::stateDoubleSign(const char & sign)
 	stateAddLexem();
 }
 ///----------------------------</ States >------------------------------------------------------
+#pragma endregion States
 
-
+#pragma region AddLExem
 ///---------------------------< AddLExem >------------------------------------------------------
 void LexicalAnalyzer::stateAddLexem()
 {
-	if ( storage == "{" && m_allLexem.size() > 1 && m_allLexem.at(m_allLexem.size() - 1).index != 2 ) // 2 '='
-		corentBlock += 1;
-
 	if ( flag.unexpectedIdVal == true )
 	{
 		exept.emplace_back(storage, numOfLine, "unexpected id val");
-		m_allLexem.emplace_back(storage, 39, numOfLine, 0, "invalid", 0, ReservedName::_Ind);
+		m_allLexem.emplace_back(storage, 39, numOfLine, 0, "invalid", ReservedName::_Ind);
 		storage = "";
 		flag.SET_FALSE_ALL();
 		return;
@@ -382,15 +392,13 @@ void LexicalAnalyzer::stateAddLexem()
 		exept.emplace_back(storage, numOfLine, "unexpected behavior before dot, expected ';'");
 	}
 
-	for(const auto& item: m_lexem )
+	map<string, int>::iterator it = m_reserveLexem.find(storage);
+	if ( it->second != 41 )
 	{
-		if ( storage == item.val )
-		{
-			m_allLexem.emplace_back(storage, item.index, numOfLine, 0, "", 0, whichAlias(item.index));
-			storage = "";
-			flag.SET_FALSE_ALL();
-			return;
-		}
+		m_allLexem.emplace_back(storage, it->second, numOfLine, 0, "", whichAlias(it->second));
+		storage = "";
+		flag.SET_FALSE_ALL();
+		return;
 	}
 
 	///----------------------------------------const value --------------------------------------------
@@ -398,16 +406,16 @@ void LexicalAnalyzer::stateAddLexem()
 
 	if ( isConstVal.flag == true && flag.numStartFromNull == true )
 	{
-		m_allLexem.emplace_back(storage, 40, numOfLine, 0, "invalid", 0, ReservedName::_Con);
+		m_allLexem.emplace_back(storage, 40, numOfLine, 0, "invalid", ReservedName::_Con);
 		exept.emplace_back(storage, numOfLine, "unexpected const value, cannot start from 0");
 		flag.SET_FALSE_ALL();
 		storage = "";
 		return;
 	}
-	if ( isConstVal.flag == true && flag.numStartFromNull == false )
+	else if ( isConstVal.flag == true && flag.numStartFromNull == false )
 	{
 		numOfConstVal++;
-		m_allLexem.emplace_back(storage, 40, numOfLine, numOfConstVal, isConstVal.val, 0, ReservedName::_Con);
+		m_allLexem.emplace_back(storage, 40, numOfLine, numOfConstVal, isConstVal.val, ReservedName::_Con);
 		storage = "";
 		flag.SET_FALSE_ALL();
 		return;
@@ -417,55 +425,11 @@ void LexicalAnalyzer::stateAddLexem()
 
 	///------------------------------------------value-------------------------------------------------
 	
-
-
-	/*
-	AllLexem test = whichID(storage, corentBlock);
-	const string checkType = whichTypeID();
-	int block = countBlock();
-	if ( test.numOfID == -1 )
-	{
-		if ( checkType == "uint" || checkType == "int" || checkType == "udouble" || checkType == "double" )
-		{
-			numOfIdentifier++;
-			if ( corentBlock <= block ) corentBlock = block;
-			m_allLexem.emplace_back(storage, 39, numOfLine, numOfIdentifier, checkType, block);
-			flag.SET_FALSE_ALL();
-			storage = "";
-			return;
-		}
-		else
-		{
-			if ( checkType == "" )
-			{
-				numOfIdentifier++;
-				m_allLexem.emplace_back(storage, 39, numOfLine, numOfIdentifier, "", test.block);
-				storage = "";
-				flag.SET_FALSE_ALL();
-				return;
-			}
-		}
-	}
-	else
-	{
-		if ( checkType == "uint" || checkType == "int" || checkType == "udouble" || checkType == "double" )
-		{
-			numOfIdentifier++;
-			m_allLexem.emplace_back(storage, 39, numOfLine, numOfIdentifier, checkType, block);
-			flag.SET_FALSE_ALL();
-			storage = "";
-			return;
-		}
-		else
-		{
-			m_allLexem.emplace_back(storage, 39, numOfLine, test.numOfID, test.type, test.block);
-			flag.SET_FALSE_ALL();
-			storage = "";
-			return;
-		}
-	}
-
-	*/
+	numOfIdentifier++;
+	m_allLexem.emplace_back(storage, 39, numOfLine, numOfIdentifier, "", ReservedName::_Ind);
+	flag.SET_FALSE_ALL();
+	storage = "";
+	return;
 
 	///------------------------------------------value-------------------------------------------------
 }
@@ -502,27 +466,10 @@ ConVal LexicalAnalyzer::isConVal()
 	return checkObj;
 }
 
-int LexicalAnalyzer::isDeclarationID(const string & val) const
-{
-	for ( const auto& item : m_allLexem )
-	{
-		if ( item.val == val ) return item.numOfID;
-	}
-
-	return -1;
-}
-
 ///---------------------------</ AddLExem >-----------------------------------------------------
+#pragma endregion AddLExem
 
-
-bool LexicalAnalyzer::wasWriteToFileLexem(const std::vector<AllLexem>& out, const int& test, const int& bl) const
-{
-	for (const auto& item : out)
-	{
-		if (item.numOfID == test && item.block == bl) return true;
-	}
-	return false;
-}
+#pragma region Other
 
 ReservedName LexicalAnalyzer::whichAlias(const int& ali)
 {
@@ -542,6 +489,8 @@ ReservedName LexicalAnalyzer::whichAlias(const int& ali)
 	case 35: return ReservedName::_OR; break;
 	case 36: return ReservedName::_NOT; break;
 	case 37: return ReservedName::_main; break;
+	case 39: return ReservedName::_int; break;
+	case 40: return ReservedName::_double; break;
 	case 2:
 	case 4:
 	case 6:
@@ -566,6 +515,8 @@ ReservedName LexicalAnalyzer::whichAlias(const int& ali)
 	case 32:
 	case 33:
 	case 38: return ReservedName::_operator; break;
+	case 41: return ReservedName::_Ind; break;
+	case 42: return ReservedName::_Con; break;
 	default:
 		return ReservedName::_none; break;
 	}
@@ -592,7 +543,7 @@ void LexicalAnalyzer::WriteLexemToFile() const
 	for (size_t i = 0; i < m_allLexem.size(); i++)
 	{
 
-		if (m_allLexem.at(i).alias == ReservedName::_Ind && !wasWriteToFileLexem(out, m_allLexem.at(i).numOfID, m_allLexem.at(i).block))
+		if (m_allLexem.at(i).alias == ReservedName::_Ind)
 		{
 			out.push_back(m_allLexem.at(i));
 			fout << m_allLexem.at(i) << std::endl;
@@ -616,3 +567,4 @@ void LexicalAnalyzer::WriteConstToFile() const
 
 	fout.close();
 }
+#pragma endregion Other
