@@ -24,8 +24,8 @@ using std::map;
 
 enum class TypeAnalyzer
 {
-	TypeA,
-	TypeB
+	TypeA,				// OLD(MachineA)
+	TypeB					// MPA
 };
 
 enum class ReservedName
