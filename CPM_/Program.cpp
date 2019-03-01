@@ -73,8 +73,7 @@ void Program::syntaxAnalyzerType__(const TypeAnalyzer& syntaxAnalyzerType)
 	std::shared_ptr<IAnalyzer> syntaxAnalyzer;
 	switch ( syntaxAnalyzerType )
 	{
-	case TypeAnalyzer::TypeA: 
-		syntaxAnalyzer = std::make_shared<SyntaxAnalyzer>( m_allLexem );
+	case TypeAnalyzer::TypeA:
 		break;
 	case TypeAnalyzer::TypeB:
 		syntaxAnalyzer = std::make_shared<MPA>( m_allLexem );

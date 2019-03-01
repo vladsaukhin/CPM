@@ -1,7 +1,6 @@
 #pragma once
 
 #include"LexicalAnalyzer.h"
-#include"SyntaxAnalyzer.h"
 #include"MPA.h"
 
 class Program 
