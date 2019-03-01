@@ -16,7 +16,7 @@ def OutSum(asd, dsa)
 	out << Sum(asd, dsa);
 }
 
-// ############    main	  ########################
+// ---------------	main block   --------------
 main {
 	array[] = {5, 9};
 	out << array[1] << endl;

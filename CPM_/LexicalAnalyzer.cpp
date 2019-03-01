@@ -42,7 +42,7 @@ LexicalAnalyzer::LexicalAnalyzer(const string& buff)
 	}
 	catch ( std::exception& e )
 	{
-		cerr << "### Exeption:  " << e.what() << endl;
+		cerr << "##### Exeption: (constructor) " << e.what() << endl;
 	}
 }
 
@@ -63,7 +63,7 @@ void LexicalAnalyzer::ViewLogs()
 	}
 	catch ( std::exception& e )
 	{
-		cerr << "### Exeption:  " << e.what() << endl;
+		cerr << "##### Exeption: (viewer) " << e.what() << endl;
 	}
 }
 
@@ -71,12 +71,11 @@ void LexicalAnalyzer::StartProcessing()
 {
 	try
 	{
-
 		int countBracket1 = 0; // like ()   |   0 is true else false
 		int countBracket2 = 0; // like []   |   0 is true else false
 		int countBracket3 = 0; // like {}   |   0 is true else false
 
-		for ( i_class = 0; i_class < length; i_class++ )
+		while ( i_class < length )
 		{
 			if ( stateComment() ) continue;
 			if ( stateNewLine() ) continue;
@@ -99,7 +98,7 @@ void LexicalAnalyzer::StartProcessing()
 	}
 	catch ( std::exception& e )
 	{
-		cerr << "### Exeption:  " << e.what() << endl;
+		cerr << "##### Exeption: (prooccesing) " << e.what() << endl;
 	}
 }
 
@@ -150,6 +149,8 @@ void LexicalAnalyzer::isCorrectSigns()
 		{
 			unexpectedSign += sign;
 			exept.emplace_back(unexpectedSign, numOfLine__, "unexpected sign");
+			cerr << "### In line " << numOfLine__ << " you have unexpected sign" << " '" << unexpectedSign << "'" << std::endl;
+			exept.emplace_back(unexpectedSign, numOfLine__, "unexpected sign");
 			unexpectedSign = "";
 		}
 	}
@@ -183,7 +184,6 @@ bool LexicalAnalyzer::stateLetters()
 		storage += m_buff.at(i_class);
 		i_class += 1;
 	}
-
 	return exitCode;
 }
 
@@ -193,6 +193,7 @@ bool LexicalAnalyzer::stateComment()
 	{
 		i_class += 2;
 		while ( i_class != length && m_buff.at(i_class) != '\n' ) i_class++;
+		i_class += 1;
 		return true;
 	}
 	return false;
@@ -203,6 +204,7 @@ bool LexicalAnalyzer::stateNewLine()
 	if ( m_buff.at(i_class) == '\n' )
 	{
 		numOfLine++;
+		i_class += 1;
 		return true;
 	}
 	return false;
@@ -218,7 +220,7 @@ bool LexicalAnalyzer::stateDot()
 			stateAddLexem();
 		storage = "..";
 		stateAddLexem();
-		i_class++;
+		i_class += 2; // '.'+'next'
 		exitCode = true;
 	}
 	else
@@ -276,7 +278,6 @@ bool LexicalAnalyzer::stateSign(int& countBracket1, int& countBracket2, int& cou
 		{
 			i_class++;
 		}
-		i_class--;
 		break;
 	}
 	case ';':
@@ -286,7 +287,7 @@ bool LexicalAnalyzer::stateSign(int& countBracket1, int& countBracket2, int& cou
 			stateAddLexem();
 		storage = ";";
 		stateAddLexem();
-
+		i_class += 1;
 		if ( countBracket1 < 0 )
 		{
 			exept.emplace_back("", numOfLine, "unexpected amount of (");
@@ -326,19 +327,21 @@ bool LexicalAnalyzer::stateSign(int& countBracket1, int& countBracket2, int& cou
 			{
 			case '(': 
 				countBracket1++;
-				if ( m_allLexem.at(m_allLexem.size() - 1).alias == ReservedName::_Ind )
-					m_allLexem.at(m_allLexem.size() - 1).type = "func";
+				if ( m_allLexem.at(m_allLexem.size() - 2).alias == ReservedName::_Ind )
+					m_allLexem.at(m_allLexem.size() - 2).type = "func";
 				break;
 			case ')': countBracket1--; break;
 			case '[': 
 				countBracket2++;
-				if ( m_allLexem.at(m_allLexem.size() - 1).alias == ReservedName::_Ind )
-					m_allLexem.at(m_allLexem.size() - 1).type = "arr";
+				if ( m_allLexem.at(m_allLexem.size() - 2).alias == ReservedName::_Ind )
+					m_allLexem.at(m_allLexem.size() - 2).type = "arr";
 				break;
 			case ']': countBracket2--; break;
 			case '{': countBracket3++; break;
 			case '}': countBracket3--; break;
 			}
+
+			i_class += 1;
 		}
 	}
 	}
@@ -357,14 +360,15 @@ void LexicalAnalyzer::stateDoubleSign(const char & sign)
 		storage += "=";
 		++i_class;
 	}
-	
-	if ( i_class + 1 != length && m_buff.at(i_class + 1) == sign )
+	else if ( i_class + 1 != length && m_buff.at(i_class + 1) == sign )
 	{
 		storage += sign;
 		++i_class;
 	}
 
 	stateAddLexem();
+
+	i_class += 1;
 }
 ///----------------------------</ States >------------------------------------------------------
 #pragma endregion States
@@ -373,65 +377,73 @@ void LexicalAnalyzer::stateDoubleSign(const char & sign)
 ///---------------------------< AddLExem >------------------------------------------------------
 void LexicalAnalyzer::stateAddLexem()
 {
-	if ( flag.unexpectedIdVal == true )
+	try
 	{
-		exept.emplace_back(storage, numOfLine, "unexpected id val");
-		m_allLexem.emplace_back(storage, 39, numOfLine, 0, "invalid", ReservedName::_Ind);
-		storage = "";
+		if ( flag.unexpectedIdVal == true )
+		{
+			exept.emplace_back(storage, numOfLine, "unexpected id val");
+			m_allLexem.emplace_back(storage, 41, numOfLine, 0, "invalid", ReservedName::_Ind);
+			storage = "";
+			flag.SET_FALSE_ALL();
+			return;
+		}
+
+		if ( flag.unexpectedBehaviorAfterDot == true )
+		{
+			exept.emplace_back(storage, numOfLine, "unexpected behavior after dot, expected ';'");
+		}
+
+		if ( flag.unexpectedBehaviorBeforeDot == true )
+		{
+			exept.emplace_back(storage, numOfLine, "unexpected behavior before dot, expected ';'");
+		}
+
+		auto it = m_reserveLexem.find(storage);
+		if ( it != m_reserveLexem.end() )
+		{
+			m_allLexem.emplace_back(storage, it->second, numOfLine, 0, "", whichAlias(it->second));
+			storage = "";
+			flag.SET_FALSE_ALL();
+			return;
+		}
+
+		///----------------------------------------const value --------------------------------------------
+		ConVal isConstVal = isConVal();
+
+		if ( isConstVal.flag == true && flag.numStartFromNull == true )
+		{
+			m_allLexem.emplace_back(storage, 42, numOfLine, 0, "invalid", ReservedName::_Con);
+			exept.emplace_back(storage, numOfLine, "unexpected const value, cannot start from 0");
+			flag.SET_FALSE_ALL();
+			storage = "";
+			return;
+		}
+		else if ( isConstVal.flag == true && flag.numStartFromNull == false )
+		{
+			numOfConstVal++;
+			m_allLexem.emplace_back(storage, 42, numOfLine, numOfConstVal, isConstVal.val, ReservedName::_Con);
+			storage = "";
+			flag.SET_FALSE_ALL();
+			return;
+		}
+		///----------------------------------------const value --------------------------------------------
+
+
+		///------------------------------------------value-------------------------------------------------
+
+		numOfIdentifier++;
+		m_allLexem.emplace_back(storage, 41, numOfLine, numOfIdentifier, "", ReservedName::_Ind);
 		flag.SET_FALSE_ALL();
-		return;
-	}
-
-	if ( flag.unexpectedBehaviorAfterDot == true )
-	{
-		exept.emplace_back(storage, numOfLine, "unexpected behavior after dot, expected ';'");
-	}
-
-	if ( flag.unexpectedBehaviorBeforeDot == true )
-	{
-		exept.emplace_back(storage, numOfLine, "unexpected behavior before dot, expected ';'");
-	}
-
-	map<string, int>::iterator it = m_reserveLexem.find(storage);
-	if ( it->second != 41 )
-	{
-		m_allLexem.emplace_back(storage, it->second, numOfLine, 0, "", whichAlias(it->second));
-		storage = "";
-		flag.SET_FALSE_ALL();
-		return;
-	}
-
-	///----------------------------------------const value --------------------------------------------
-	ConVal isConstVal = isConVal();
-
-	if ( isConstVal.flag == true && flag.numStartFromNull == true )
-	{
-		m_allLexem.emplace_back(storage, 40, numOfLine, 0, "invalid", ReservedName::_Con);
-		exept.emplace_back(storage, numOfLine, "unexpected const value, cannot start from 0");
-		flag.SET_FALSE_ALL();
 		storage = "";
 		return;
+
+		///------------------------------------------value-------------------------------------------------
+
 	}
-	else if ( isConstVal.flag == true && flag.numStartFromNull == false )
+	catch ( std::exception& e )
 	{
-		numOfConstVal++;
-		m_allLexem.emplace_back(storage, 40, numOfLine, numOfConstVal, isConstVal.val, ReservedName::_Con);
-		storage = "";
-		flag.SET_FALSE_ALL();
-		return;
+		cerr << "##### Exeption: (add lexem) " << e.what() << endl;
 	}
-	///----------------------------------------const value --------------------------------------------
-
-
-	///------------------------------------------value-------------------------------------------------
-	
-	numOfIdentifier++;
-	m_allLexem.emplace_back(storage, 39, numOfLine, numOfIdentifier, "", ReservedName::_Ind);
-	flag.SET_FALSE_ALL();
-	storage = "";
-	return;
-
-	///------------------------------------------value-------------------------------------------------
 }
 
 ConVal LexicalAnalyzer::isConVal()
@@ -525,7 +537,7 @@ ReservedName LexicalAnalyzer::whichAlias(const int& ali)
 void LexicalAnalyzer::WriteAllToFile() const
 {
 	std::ofstream fout("./Result/Lexems.txt");
-	fout << "Iter |" << "  Num Line" << "          Lexem     " << "  Index" << "   Id/Con" << "      Type      " << " Block" <<  std::endl;
+	fout << "Iter |" << "  Num Line" << "          Lexem     " << "  Index" << "   Id/Con" << "      Type" <<  std::endl;
 	for (size_t i = 0; i < m_allLexem.size(); i++)
 	{
 		fout << i + 1 << ((i + 1) >= 1000 ? " |  " : ((i + 1) >= 100 ? "  |  " : ((i + 1) >= 10 ? "   |  " : "    |  ")));
@@ -539,7 +551,7 @@ void LexicalAnalyzer::WriteLexemToFile() const
 {
 	std::ofstream fout("./Result/Variables.txt");
 	std::vector<AllLexem> out;
-	fout << "  Num Line" << "          Lexem     " << "  Index" << "   Id/Con" << "      Type      " << " Block" << std::endl;
+	fout << "  Num Line" << "          Lexem     " << "  Index" << "   Id/Con" << "      Type" << std::endl;
 	for (size_t i = 0; i < m_allLexem.size(); i++)
 	{
 
@@ -556,7 +568,7 @@ void LexicalAnalyzer::WriteLexemToFile() const
 void LexicalAnalyzer::WriteConstToFile() const
 {
 	std::ofstream fout("./Result/Constants.txt");
-	fout << "  Num Line" << "          Lexem     " << "  Index" << "   Id/Con" << "      Type      " << " Block" << std::endl;
+	fout << "  Num Line" << "          Lexem     " << "  Index" << "   Id/Con" << "      Type" << std::endl;
 	for ( const AllLexem& item : m_allLexem )
 	{
 		if ( item.alias == ReservedName::_Con )

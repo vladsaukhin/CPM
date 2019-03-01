@@ -1,1 +1,35 @@
-  Num Line          Lexem       Index   Id/Con      Type       Block
+  Num Line          Lexem       Index   Id/Con      Type
+    4                     0     42      1          int
+   20                     5     42      2          int
+   20                     9     42      3          int
+   21                     1     42      4          int
+   22                     0     42      5          int
+   22                     1     42      6          int
+   23                    12     42      7          int
+   24                   2.0     42      8       double
+   25                   0.3     42      9       double
+   26                   0.0     42     10       double
+   32                     5     42     11          int
+   32                     9     42     12          int
+   32                     9     42     13          int
+   34                     5     42     14          int
+   34                   5.0     42     15       double
+   36                     5     42     16          int
+   36                     3     42     17          int
+   36                    78     42     18          int
+   36                   100     42     19          int
+   36                     1     42     20          int
+   36                     2     42     21          int
+   37                     5     42     22          int
+   37                     5     42     23          int
+   39                     5     42     24          int
+   43                     5     42     25          int
+   43                     3     42     26          int
+   43                    78     42     27          int
+   43                   100     42     28          int
+   43                     1     42     29          int
+   43                     2     42     30          int
+   44                     5     42     31          int
+   44                     5     42     32          int
+   46                     5     42     33          int
+   50                     6     42     34          int

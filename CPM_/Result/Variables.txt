@@ -1,1 +1,39 @@
-  Num Line          Lexem       Index   Id/Con      Type       Block
+  Num Line          Lexem       Index   Id/Con      Type
+    2                   Sum     41      1         func
+    2                   asd     41      2             
+    2                   dsa     41      3             
+    4                   res     41      4             
+    5                   res     41      5             
+    5                   asd     41      6             
+    5                   dsa     41      7             
+    6                   res     41      8             
+    9                  Sum2     41      9         func
+    9                   asd     41     10             
+    9                   dsa     41     11             
+   11                   asd     41     12             
+   11                   dsa     41     13             
+   14                OutSum     41     14         func
+   14                   asd     41     15             
+   14                   dsa     41     16             
+   16                   Sum     41     17         func
+   16                   asd     41     18             
+   16                   dsa     41     19             
+   20                 array     41     20          arr
+   21                 array     41     21          arr
+   22                 array     41     22          arr
+   23                result     41     23             
+   24                     a     41     24             
+   25                     b     41     25             
+   26                     c     41     26             
+   28                   sum     41     27             
+   28                  Sum2     41     28         func
+   28                     a     41     29             
+   28                     b     41     30             
+   29                OutSum     41     31         func
+   29                     b     41     32             
+   29                     a     41     33             
+   31                     a     41     34             
+   31                     c     41     35             
+   39                     a     41     36             
+   46                     a     41     37             
+   50                     b     41     38             
